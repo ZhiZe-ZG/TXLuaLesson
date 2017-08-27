@@ -3104,10 +3104,6 @@ math.huge
 
 The float value HUGE_VAL, a value larger than any other numeric value.
 
-math.log (x [, base])
-
-Returns the logarithm of x in the given base. The default for base is e (so that the function returns the natural logarithm of x).
-
 math.max (x, ···)
 
 Returns the argument with the maximum value, according to the Lua operator <. (integer/float)
@@ -3143,10 +3139,6 @@ This function is an interface to the underling pseudo-random generator function 
 math.randomseed (x)
 
 Sets x as the "seed" for the pseudo-random generator: equal seeds produce equal sequences of numbers.
-
-math.sin (x)
-
-Returns the sine of x (assumed to be in radians).
 
 math.sqrt (x)
 
