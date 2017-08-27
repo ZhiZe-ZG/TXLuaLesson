@@ -1,1 +1,8 @@
-���̳����йܵ�Github��https://github.com/TaiXuan91/TXLuaLesson
+本教程已托管到Github：https://github.com/TaiXuan91/TXLuaLesson
+
+太玄的Lua编程语言课
+
+# 0Xeee
+## 前置知识
+## 正文
+## 后续推荐
