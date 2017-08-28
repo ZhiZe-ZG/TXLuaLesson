@@ -495,22 +495,6 @@ The order operators work as follows. If both arguments are numbers, then they ar
 
 Following the IEEE 754 standard, NaN is considered neither smaller than, nor equal to, nor greater than any value (including itself).
 
-3.4.5 – Logical Operators
-
-The logical operators in Lua are and, or, and not. Like the control structures (see §3.3.4), all logical operators consider both false and nil as false and anything else as true.
-
-The negation operator not always returns false or true. The conjunction operator and returns its first argument if this value is false or nil; otherwise, and returns its second argument. The disjunction operator or returns its first argument if this value is different from nil and false; otherwise, or returns its second argument. Both and and or use short-circuit evaluation; that is, the second operand is evaluated only if necessary. Here are some examples:
-
-     10 or 20            --> 10
-     10 or error()       --> 10
-     nil or "a"          --> "a"
-     nil and 10          --> nil
-     false and error()   --> false
-     false and nil       --> false
-     false or nil        --> nil
-     10 and 20           --> 20
-(In this manual, --> indicates the result of the preceding expression.)
-
 3.4.6 – Concatenation
 
 The string concatenation operator in Lua is denoted by two dots ('..'). If both operands are strings or numbers, then they are converted to strings according to the rules described in §3.4.3. Otherwise, the __concat metamethod is called (see §2.4).
