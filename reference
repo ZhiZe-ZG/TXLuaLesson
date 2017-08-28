@@ -3058,10 +3058,6 @@ By default, i is 1 and j is #list.
 
 This library provides basic mathematical functions. It provides all its functions and constants inside the table math. Functions with the annotation "integer/float" give integer results for integer arguments and float results for float (or mixed) arguments. Rounding functions (math.ceil, math.floor, and math.modf) return an integer when the result fits in the range of an integer, or a float otherwise.
 
-math.abs (x)
-
-Returns the absolute value of x. (integer/float)
-
 math.ceil (x)
 
 Returns the smallest integral value larger than or equal to x.
@@ -3074,17 +3070,9 @@ math.huge
 
 The float value HUGE_VAL, a value larger than any other numeric value.
 
-math.max (x, ···)
-
-Returns the argument with the maximum value, according to the Lua operator <. (integer/float)
-
 math.maxinteger
 
 An integer with the maximum value for an integer.
-
-math.min (x, ···)
-
-Returns the argument with the minimum value, according to the Lua operator <. (integer/float)
 
 math.mininteger
 
