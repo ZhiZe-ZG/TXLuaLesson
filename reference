@@ -471,16 +471,6 @@ The conversion from numbers to strings uses a non-specified human-readable forma
 
 3.4.4 – Relational Operators
 
-Lua supports the following relational operators:
-
-==: equality
-~=: inequality
-<: less than
->: greater than
-<=: less or equal
->=: greater or equal
-These operators always result in false or true.
-
 Equality (==) first compares the type of its operands. If the types are different, then the result is false. Otherwise, the values of the operands are compared. Strings are compared in the obvious way. Numbers are equal if they denote the same mathematical value.
 
 Tables, userdata, and threads are compared by reference: two objects are considered equal only if they are the same object. Every time you create a new object (a table, userdata, or thread), this new object is different from any previously existing object. Closures with the same reference are always equal. Closures with any detectable difference (different behavior, different definition) are always different.
