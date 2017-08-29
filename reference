@@ -5,9 +5,11 @@ This section describes the basic concepts of the language.
 2.1 – Values and Types
 
 The type number represents both integer numbers and real (floating-point) numbers. 
-The type string represents immutable sequences of bytes. Lua is 8-bit clean: strings can contain any 8-bit value, including embedded zeros ('\0'). Lua is also encoding-agnostic; it makes no assumptions about the contents of a string.
+The type string represents immutable sequences of bytes. Lua is 8-bit clean: 
+strings can contain any 8-bit value, including embedded zeros ('\0'). Lua is also encoding-agnostic; 
+it makes no assumptions about the contents of a string.
 
-The type number uses two internal representations, or two subtypes, one called integer and the other called float. Lua has explicit rules about when each representation is used, but it also converts between them automatically as needed (see §3.4.3). Therefore, the programmer may choose to mostly ignore the difference between integers and floats or to assume complete control over the representation of each number. Standard Lua uses 64-bit integers and double-precision (64-bit) floats, but you can also compile Lua so that it uses 32-bit integers and/or single-precision (32-bit) floats. The option with 32 bits for both integers and floats is particularly attractive for small machines and embedded systems. (See macro LUA_32BITS in file luaconf.h.)
+Standard Lua uses 64-bit integers and double-precision (64-bit) floats, but you can also compile Lua so that it uses 32-bit integers and/or single-precision (32-bit) floats. The option with 32 bits for both integers and floats is particularly attractive for small machines and embedded systems. (See macro LUA_32BITS in file luaconf.h.)
 
 Lua can call (and manipulate) functions written in Lua and functions written in C (see §3.4.10). Both are represented by the type function.
 
@@ -2566,19 +2568,6 @@ Sets the metatable for the given table. (To change the metatable of other types 
 
 This function returns table.
 
-tonumber (e [, base])
-
-When called with no base, tonumber tries to convert its argument to a number. If the argument is already a number or a string convertible to a number, then tonumber returns this number; otherwise, it returns nil.
-
-The conversion of strings can result in integers or floats, according to the lexical conventions of Lua (see §3.1). (The string may have leading and trailing spaces and a sign.)
-
-When called with base, then e must be a string to be interpreted as an integer numeral in that base. The base may be any integer between 2 and 36, inclusive. In bases above 10, the letter 'A' (in either upper or lower case) represents 10, 'B' represents 11, and so forth, with 'Z' representing 35. If the string e is not a valid numeral in the given base, the function returns nil.
-
-tostring (v)
-
-Receives a value of any type and converts it to a string in a human-readable format. (For complete control of how numbers are converted, use string.format.)
-If the metatable of v has a __tostring field, then tostring calls the corresponding value with v as argument, and uses the result of the call as its result.
-
 _VERSION
 
 A global variable (not a function) that holds a string containing the running Lua version. The current value of this variable is "Lua 5.3".
@@ -3025,14 +3014,6 @@ By default, i is 1 and j is #list.
 
 This library provides basic mathematical functions. It provides all its functions and constants inside the table math. Functions with the annotation "integer/float" give integer results for integer arguments and float results for float (or mixed) arguments. Rounding functions (math.ceil, math.floor, and math.modf) return an integer when the result fits in the range of an integer, or a float otherwise.
 
-math.ceil (x)
-
-Returns the smallest integral value larger than or equal to x.
-
-math.floor (x)
-
-Returns the largest integral value smaller than or equal to x.
-
 math.huge
 
 The float value HUGE_VAL, a value larger than any other numeric value.
@@ -3045,10 +3026,6 @@ math.mininteger
 
 An integer with the minimum value for an integer.
 
-math.modf (x)
-
-Returns the integral part of x and the fractional part of x. Its second result is always a float.
-
 math.random ([m [, n]])
 
 When called without arguments, returns a pseudo-random float with uniform distribution in the range [0,1). When called with two integers m and n, math.random returns a pseudo-random integer with uniform distribution in the range [m, n]. (The value n-m cannot be negative and must fit in a Lua integer.) The call math.random(n) is equivalent to math.random(1,n).
@@ -3058,14 +3035,6 @@ This function is an interface to the underling pseudo-random generator function 
 math.randomseed (x)
 
 Sets x as the "seed" for the pseudo-random generator: equal seeds produce equal sequences of numbers.
-
-math.tointeger (x)
-
-If the value x is convertible to an integer, returns that integer. Otherwise, returns nil.
-
-math.type (x)
-
-Returns "integer" if x is an integer, "float" if it is a float, or nil if x is not a number.
 
 math.ult (m, n)
 
