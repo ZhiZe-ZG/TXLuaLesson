@@ -3014,18 +3014,6 @@ By default, i is 1 and j is #list.
 
 This library provides basic mathematical functions. It provides all its functions and constants inside the table math. Functions with the annotation "integer/float" give integer results for integer arguments and float results for float (or mixed) arguments. Rounding functions (math.ceil, math.floor, and math.modf) return an integer when the result fits in the range of an integer, or a float otherwise.
 
-math.huge
-
-The float value HUGE_VAL, a value larger than any other numeric value.
-
-math.maxinteger
-
-An integer with the maximum value for an integer.
-
-math.mininteger
-
-An integer with the minimum value for an integer.
-
 math.random ([m [, n]])
 
 When called without arguments, returns a pseudo-random float with uniform distribution in the range [0,1). When called with two integers m and n, math.random returns a pseudo-random integer with uniform distribution in the range [m, n]. (The value n-m cannot be negative and must fit in a Lua integer.) The call math.random(n) is equivalent to math.random(1,n).
@@ -3035,10 +3023,6 @@ This function is an interface to the underling pseudo-random generator function 
 math.randomseed (x)
 
 Sets x as the "seed" for the pseudo-random generator: equal seeds produce equal sequences of numbers.
-
-math.ult (m, n)
-
-Returns a boolean, true if and only if integer m is below integer n when they are compared as unsigned integers.
 
 6.8 – Input and Output Facilities
 
