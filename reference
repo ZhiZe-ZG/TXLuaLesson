@@ -4,9 +4,8 @@ This section describes the basic concepts of the language.
 
 2.1 – Values and Types
 
-This means that all values can be stored in variables, passed as arguments to other functions, and returned as results.
-
-There are eight basic types in Lua: nil, boolean, number, string, function, userdata, thread, and table. The type nil has one single value, nil, whose main property is to be different from any other value; it usually represents the absence of a useful value. The type boolean has two values, false and true. Both nil and false make a condition false; any other value makes it true. The type number represents both integer numbers and real (floating-point) numbers. The type string represents immutable sequences of bytes. Lua is 8-bit clean: strings can contain any 8-bit value, including embedded zeros ('\0'). Lua is also encoding-agnostic; it makes no assumptions about the contents of a string.
+The type number represents both integer numbers and real (floating-point) numbers. 
+The type string represents immutable sequences of bytes. Lua is 8-bit clean: strings can contain any 8-bit value, including embedded zeros ('\0'). Lua is also encoding-agnostic; it makes no assumptions about the contents of a string.
 
 The type number uses two internal representations, or two subtypes, one called integer and the other called float. Lua has explicit rules about when each representation is used, but it also converts between them automatically as needed (see §3.4.3). Therefore, the programmer may choose to mostly ignore the difference between integers and floats or to assume complete control over the representation of each number. Standard Lua uses 64-bit integers and double-precision (64-bit) floats, but you can also compile Lua so that it uses 32-bit integers and/or single-precision (32-bit) floats. The option with 32 bits for both integers and floats is particularly attractive for small machines and embedded systems. (See macro LUA_32BITS in file luaconf.h.)
 
@@ -2544,15 +2543,14 @@ pcall (f [, arg1, ···])
 
 Calls function f with the given arguments in protected mode. This means that any error inside f is not propagated; instead, pcall catches the error and returns a status code. Its first result is the status code (a boolean), which is true if the call succeeds without errors. In such case, pcall also returns all results from the call, after this first result. In case of any error, pcall returns false plus the error message.
 
-rawequal (v1, v2)
-
-Checks whether v1 is equal to v2, without invoking the __eq metamethod. Returns a boolean.
 rawget (table, index)
 
 Gets the real value of table[index], without invoking the __index metamethod. table must be a table; index may be any value.
+
 rawlen (v)
 
 Returns the length of the object v, which must be a table or a string, without invoking the __len metamethod. Returns an integer.
+
 rawset (table, index, value)
 
 Sets the real value of table[index] to value, without invoking the __newindex metamethod. table must be a table, index any value different from nil and NaN, and value any Lua value.
@@ -2581,9 +2579,6 @@ tostring (v)
 Receives a value of any type and converts it to a string in a human-readable format. (For complete control of how numbers are converted, use string.format.)
 If the metatable of v has a __tostring field, then tostring calls the corresponding value with v as argument, and uses the result of the call as its result.
 
-type (v)
-
-Returns the type of its only argument, coded as a string. The possible results of this function are "nil" (a string, not the value nil), "number", "string", "boolean", "table", "function", "thread", and "userdata".
 _VERSION
 
 A global variable (not a function) that holds a string containing the running Lua version. The current value of this variable is "Lua 5.3".
