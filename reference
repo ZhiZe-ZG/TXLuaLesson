@@ -4,12 +4,9 @@ This section describes the basic concepts of the language.
 
 2.1 – Values and Types
 
-The type number represents both integer numbers and real (floating-point) numbers. 
 The type string represents immutable sequences of bytes. Lua is 8-bit clean: 
 strings can contain any 8-bit value, including embedded zeros ('\0'). Lua is also encoding-agnostic; 
 it makes no assumptions about the contents of a string.
-
-Standard Lua uses 64-bit integers and double-precision (64-bit) floats, but you can also compile Lua so that it uses 32-bit integers and/or single-precision (32-bit) floats. The option with 32 bits for both integers and floats is particularly attractive for small machines and embedded systems. (See macro LUA_32BITS in file luaconf.h.)
 
 Lua can call (and manipulate) functions written in Lua and functions written in C (see §3.4.10). Both are represented by the type function.
 
