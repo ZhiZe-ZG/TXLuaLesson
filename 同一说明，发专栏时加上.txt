@@ -1,6 +1,8 @@
+太玄的Lua编程语言课
+
 本教程已托管到Github：https://github.com/TaiXuan91/TXLuaLesson
 
-太玄的Lua编程语言课
+
 
 # 0Xeee
 ## 前置知识
