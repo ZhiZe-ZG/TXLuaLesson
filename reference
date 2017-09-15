@@ -2755,6 +2755,7 @@ Here are some examples:
 string.match (s, pattern [, init])
 
 Looks for the first match of pattern (see §6.4.1) in the string s. If it finds one, then match returns the captures from the pattern; otherwise it returns nil. If pattern specifies no captures, then the whole match is returned. A third, optional numeric argument init specifies where to start the search; its default value is 1 and can be negative.
+
 string.pack (fmt, v1, v2, ···)
 
 Returns a binary string containing the values v1, v2, etc. packed (that is, serialized in binary form) according to the format string fmt (see §6.4.2).
@@ -2762,16 +2763,6 @@ Returns a binary string containing the values v1, v2, etc. packed (that is, seri
 string.packsize (fmt)
 
 Returns the size of a string resulting from string.pack with the given format. The format string cannot have the variable-length options 's' or 'z' (see §6.4.2).
-
-string.rep (s, n [, sep])
-
-Returns a string that is the concatenation of n copies of the string s separated by the string sep. The default value for sep is the empty string (that is, no separator). Returns the empty string if n is not positive.
-(Note that it is very easy to exhaust the memory of your machine with a single call to this function.)
-
-string.sub (s, i [, j])
-
-Returns the substring of s that starts at i and continues until j; i and j can be negative. If j is absent, then it is assumed to be equal to -1 (which is the same as the string length). In particular, the call string.sub(s,1,j) returns a prefix of s with length j, and string.sub(s, -i) (for a positive i) returns a suffix of s with length i.
-If, after the translation of negative indices, i is less than 1, it is corrected to 1. If j is greater than the string length, it is corrected to that length. If, after these corrections, i is greater than j, the function returns the empty string.
 
 string.unpack (fmt, s [, pos])
 
