@@ -14,8 +14,6 @@ The type userdata is provided to allow arbitrary C data to be stored in Lua vari
 
 The type thread represents independent threads of execution and it is used to implement coroutines (see §2.6). Lua threads are not related to operating-system threads. Lua supports coroutines on all systems, even those that do not support threads natively.
 
-The type table implements associative arrays, that is, arrays that can be indexed not only with numbers, but with any Lua value except nil and NaN. (Not a Number is a special value used to represent undefined or unrepresentable numerical results, such as 0/0.) Tables can be heterogeneous; that is, they can contain values of all types (except nil). Any key with value nil is not considered part of the table. Conversely, any key that is not part of a table has an associated value nil.
-
 Tables are the sole data-structuring mechanism in Lua; they can be used to represent ordinary arrays, lists, symbol tables, sets, records, graphs, trees, etc. To represent records, Lua uses the field name as an index. The language supports this representation by providing a.name as syntactic sugar for a["name"]. There are several convenient ways to create tables in Lua (see §3.4.9).
 
 Like indices, the values of table fields can be of any type. In particular, because functions are first-class values, table fields can contain functions. Thus tables can also carry methods (see §3.4.11).
@@ -231,7 +229,7 @@ A single name can denote a global variable or a local variable (or a function's 
 Name denotes identifiers, as defined in §3.1.
 
 Any variable name is assumed to be global unless explicitly declared as a local (see §3.3.7). Local variables are lexically scoped: local variables can be freely accessed by functions defined inside their scope (see §3.5).
-
+函数的形参默认是局部变量
 Before the first assignment to a variable, its value is nil.
 
 Square brackets are used to index a table:
@@ -3389,7 +3387,7 @@ Here is the complete syntax of Lua in extended BNF. As usual in extended BNF, {A
 	exp ::=  nil | false | true | Numeral | LiteralString | ‘...’ | functiondef | 
 		 prefixexp | tableconstructor | exp binop exp | unop exp 
 
-	prefixexp ::= var | functioncall | ‘(’ exp ‘)’
+	prefixexp ::= var | functioncall | ‘(’ exp“ ‘)’
 
 	functioncall ::=  prefixexp args | prefixexp ‘:’ Name args 
 
