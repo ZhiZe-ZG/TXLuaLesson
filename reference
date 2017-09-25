@@ -288,7 +288,6 @@ The control structures if, while, and repeat have the usual meaning and familiar
 
 	stat ::= while exp do block end
 	stat ::= repeat block until exp
-	stat ::= if exp then block {elseif exp then block} [else block] end
 Lua also has a for statement, in two flavors (see §3.3.5).
 
 The condition expression of a control structure can return any value. Both false and nil are considered false. All values different from nil and false are considered true (in particular, the number 0 and the empty string are also true).
