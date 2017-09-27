@@ -1,7 +1,5 @@
 2 – Basic Concepts
 
-This section describes the basic concepts of the language.
-
 2.1 – Values and Types
 
 The type string represents immutable sequences of bytes. Lua is 8-bit clean: 
