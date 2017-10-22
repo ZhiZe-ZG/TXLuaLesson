@@ -38,8 +38,8 @@ Stage4理解函数
 
 Stage5表结构(字典,表嵌套)
 0X18简单的表
-*0X24词典
-*0X25引用类型(和常量)
+0X24词典
+*0X25面向对象语法糖
 后继是模块
 遍历
 
@@ -54,9 +54,27 @@ Stage7正则表达式
 Stage8模块
 结合表结构和流程控制,介绍遍历表的两个函数ipairs和pairs
 
-面向对象编程(表作为对象,表加闭包实现面向对象 )
+面向对象编程(表作为对象,表加闭包实现面向对象 )(函数加冒号定义和函数加冒号定义)
 函数式编程(用三元表达式和递归,替换流程控制的功能)(用尾递归减少内存消耗)
 
 本课程的整体后继
+函数式编程
+面向对象编程
 代数和符号运算
 数据结构
+
+
+如果成员是函数，用冒号代替点。表示把表本身作为第一个参数传递给函数。
+The colon syntax is used for defining methods, that is, functions that have an implicit extra parameter self. Thus, the statement
+
+     function t.a.b.c:f (params) body end
+is syntactic sugar for
+
+     t.a.b.c.f = function (self, params) body end
+
+     self并不是一个关键字.这只是一种语法糖
+
+
+函数式编程
+lambda表达式
+屠龙之技
