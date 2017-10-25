@@ -199,10 +199,10 @@ Names (also called identifiers) in Lua can be any string of letters, digits, and
 
 The following keywords are reserved and cannot be used as names:
 
-     and       break     do        else      elseif    end
-     false     for       function  goto      if        in
-     local     nil       not       or        repeat    return
-     then      true      until     while
+           break     do              end
+      for       function  goto             in
+     local             repeat    return
+     then       until     while
 Lua is a case-sensitive language: and is a reserved word, but And and AND are two different, valid names. As a convention, programs should avoid creating names that start with an underscore followed by one or more uppercase letters (such as _VERSION).
 
 The following strings denote other tokens:
