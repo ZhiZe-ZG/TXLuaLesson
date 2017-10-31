@@ -199,10 +199,9 @@ Names (also called identifiers) in Lua can be any string of letters, digits, and
 
 The following keywords are reserved and cannot be used as names:
 
-           break     do              end
-      for       function  goto             in
-     local             repeat    return
-     then       until     while
+                        end
+      for                    in
+     local             
 Lua is a case-sensitive language: and is a reserved word, but And and AND are two different, valid names. As a convention, programs should avoid creating names that start with an underscore followed by one or more uppercase letters (such as _VERSION).
 
 The following strings denote other tokens:
@@ -279,25 +278,6 @@ Lua handles a chunk as the body of an anonymous function with a variable number 
 A chunk can be stored in a file or in a string inside the host program. To execute a chunk, Lua first loads it, precompiling the chunk's code into instructions for a virtual machine, and then Lua executes the compiled code with an interpreter for the virtual machine.
 
 Chunks can also be precompiled into binary form; see program luac and function string.dump for details. Programs in source and compiled forms are interchangeable; Lua automatically detects the file type and acts accordingly (see load).
-
-3.3.4 – Control Structures
-
-The control structures if, while, and repeat have the usual meaning and familiar syntax:
-
-	stat ::= while exp do block end
-	stat ::= repeat block until exp
-
-In the repeat–until loop, the inner block does not end at the until keyword, but only after the condition. So, the condition can refer to local variables declared inside the loop block.
-
-The break statement terminates the execution of a while, repeat, or for loop, skipping to the next statement after the loop:
-
-	stat ::= break
-A break ends the innermost enclosing loop.
-
-The return statement is used to return values from a function or a chunk (which is an anonymous function). Functions can return more than one value, so the syntax for the return statement is
-
-	stat ::= return [explist] [‘;’]
-The return statement can only be written as the last statement of a block. If it is really necessary to return in the middle of a block, then an explicit inner block can be used, as in the idiom do return end, because now return is the last statement in its (inner) block.
 
 3.3.5 – For Statement
 
