@@ -289,15 +289,6 @@ The control structures if, while, and repeat have the usual meaning and familiar
 
 In the repeat–until loop, the inner block does not end at the until keyword, but only after the condition. So, the condition can refer to local variables declared inside the loop block.
 
-The goto statement transfers the program control to a label. For syntactical reasons, labels in Lua are considered statements too:
-
-	stat ::= goto Name
-	stat ::= label
-	label ::= ‘::’ Name ‘::’
-A label is visible in the entire block where it is defined, except inside nested blocks where a label with the same name is defined and inside nested functions. A goto may jump to any visible label as long as it does not enter into the scope of a local variable.
-
-Labels and empty statements are called void statements, as they perform no actions.
-
 The break statement terminates the execution of a while, repeat, or for loop, skipping to the next statement after the loop:
 
 	stat ::= break
