@@ -2794,12 +2794,6 @@ Alignment works as follows: For each option, the format gets extra padding until
 
 All padding is filled with zeros by string.pack (and ignored by string.unpack).
 
-6.5 – UTF-8 Support
-
-utf8.charpattern
-
-The pattern (a string, not a function) "[\0-\x7F\xC2-\xF4][\x80-\xBF]*" (see §6.4.1), which matches exactly one UTF-8 byte sequence, assuming that the subject is a valid UTF-8 string.
-
 6.6 – Table Manipulation
 
 This library provides generic functions for table manipulation. It provides all its functions inside the table table.
