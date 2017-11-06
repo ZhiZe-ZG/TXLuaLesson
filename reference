@@ -201,7 +201,7 @@ The following keywords are reserved and cannot be used as names:
 
                         end
       for                    in
-     local             
+     local         
 Lua is a case-sensitive language: and is a reserved word, but And and AND are two different, valid names. As a convention, programs should avoid creating names that start with an underscore followed by one or more uppercase letters (such as _VERSION).
 
 The following strings denote other tokens:
@@ -224,10 +224,6 @@ A single name can denote a global variable or a local variable (or a function's 
 
 	var ::= Name
 Name denotes identifiers, as defined in §3.1.
-
-Any variable name is assumed to be global unless explicitly declared as a local (see §3.3.7). Local variables are lexically scoped: local variables can be freely accessed by functions defined inside their scope (see §3.5).
-函数的形参默认是局部变量
-Before the first assignment to a variable, its value is nil.
 
 Square brackets are used to index a table:
 
@@ -286,31 +282,7 @@ The for statement has two forms: one numerical and one generic.
 The numerical for loop repeats a block of code while a control variable runs through an arithmetic progression. It has the following syntax:
 
 	stat ::= for Name ‘=’ exp ‘,’ exp [‘,’ exp] do block end
-The block is repeated for name starting at the value of the first exp, until it passes the second exp by steps of the third exp. More precisely, a for statement like
 
-     for v = e1, e2, e3 do block end
-is equivalent to the code:
-
-     do
-       local var, limit, step = tonumber(e1), tonumber(e2), tonumber(e3)
-       if not (var and limit and step) then error() end
-       var = var - step
-       while true do
-         var = var + step
-         if (step >= 0 and var > limit) or (step < 0 and var < limit) then
-           break
-         end
-         local v = var
-         block
-       end
-     end
-Note the following:
-
-All three control expressions are evaluated only once, before the loop starts. They must all result in numbers.
-var, limit, and step are invisible variables. The names shown here are for explanatory purposes only.
-If the third expression (the step) is absent, then a step of 1 is used.
-You can use break and goto to exit a for loop.
-The loop variable v is local to the loop body. If you need its value after the loop, assign it to another variable before exiting the loop.
 The generic for statement works over functions, called iterators. On each iteration, the iterator function is called to produce a new value, stopping when this new value is nil. The generic for loop has the following syntax:
 
 	stat ::= for namelist in explist do block end
@@ -3262,11 +3234,6 @@ Here is the complete syntax of Lua in extended BNF. As usual in extended BNF, {A
 		 functioncall | 
 		 label | 
 		 break | 
-		 goto Name | 
-		 do block end | 
-		 while exp do block end | 
-		 repeat block until exp | 
-		 if exp then block {elseif exp then block} [else block] end | 
 		 for Name ‘=’ exp ‘,’ exp [‘,’ exp] do block end | 
 		 for namelist in explist do block end | 
 		 function funcname funcbody | 
@@ -3274,8 +3241,6 @@ Here is the complete syntax of Lua in extended BNF. As usual in extended BNF, {A
 		 local namelist [‘=’ explist] 
 
 	retstat ::= return [explist] [‘;’]
-
-	label ::= ‘::’ Name ‘::’
 
 	funcname ::= Name {‘.’ Name} [‘:’ Name]
 
