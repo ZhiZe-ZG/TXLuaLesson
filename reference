@@ -28,7 +28,7 @@ As will be discussed in §3.2 and §3.3.3, any reference to a free name (that is
 
 Despite the existence of this external _ENV variable and the translation of free names, _ENV is a completely regular name. In particular, you can define new variables and parameters with that name. Each reference to a free name uses the _ENV that is visible at that point in the program, following the usual visibility rules of Lua (see §3.5).
 
-Any table used as the value of _ENV is called an environment.
+Any table used as the value of _ENV is called an environment.所有的全局变量都是表_ENV的成员.
 
 Lua keeps a distinguished environment called the global environment. This value is kept at a special index in the C registry (see §4.5). In Lua, the global variable _G is initialized with this same value. (_G is never used internally.)
 
@@ -367,10 +367,6 @@ The operator ~= is exactly the negation of equality (==).
 The order operators work as follows. If both arguments are numbers, then they are compared according to their mathematical values (regardless of their subtypes). Otherwise, if both arguments are strings, then their values are compared according to the current locale. Otherwise, Lua tries to call the "lt" or the "le" metamethod (see §2.4). A comparison a > b is translated to b < a and a >= b is translated to b <= a.
 
 Following the IEEE 754 standard, NaN is considered neither smaller than, nor equal to, nor greater than any value (including itself).
-
-3.4.6 – Concatenation
-
-The string concatenation operator in Lua is denoted by two dots ('..'). If both operands are strings or numbers, then they are converted to strings according to the rules described in §3.4.3. Otherwise, the __concat metamethod is called (see §2.4).
 
 3.4.7 – The Length Operator
 还可以返回有序表的长度
