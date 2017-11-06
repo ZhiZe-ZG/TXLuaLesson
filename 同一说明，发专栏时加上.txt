@@ -47,7 +47,11 @@ Stage5表结构(字典,表嵌套)
 0X18简单的表
 0X24词典
 0X25表嵌套
-*0X2C表的遍历
+(添加对Stage6的依赖)
+0X2C表的遍历
+*0X2D对表操作(作用于表的函数rawset,table等)
+表的相关函数
+迭代器的原理解析
 后继是模块
 遍历
 表的装箱
@@ -56,19 +60,15 @@ a={f()}
 回顾批量赋值,如果左边多于右边.则多出来的变量会被赋予nil
 全局就是一张大表
 
+独立lua的相关内容(命令行参数等)
+
 垃圾回收和弱表
 
 异常处理
 pcall,xpcall
 
-Stage6流程控制
-0X14选择结构
-0X19分段函数
-0X26条件表达式
-0X27跳转语句
-0X28循环语句
-0X29再谈循环
-0X2B循环for
+模块编写
+模块涉及到的函数
 
 后继面向对象编程(独立分支)
 (后继递归)
@@ -104,15 +104,6 @@ Stage8模块
 
 
 如果成员是函数，用冒号代替点。表示把表本身作为第一个参数传递给函数。
-The colon syntax is used for defining methods, that is, functions that have an implicit extra parameter self. Thus, the statement
-
-     function t.a.b.c:f (params) body end
-is syntactic sugar for
-
-     t.a.b.c.f = function (self, params) body end
-
-     self并不是一个关键字.这只是一种语法糖
-
 
 函数式编程
 lambda表达式
@@ -140,6 +131,21 @@ BNF嵌入到Lua中介绍.
 #函数式编程,lambda表达式,用lambda表达式替代流程控制和值(另外弄一个专题)
 #BNF和严格的Lua语法(另外弄一个专题)
 #数据结构(另外弄一个专题)
-#编程语言范式(表达式,函数,字面值,流程控制,异常处理,数据结构,类型系统)
+#线程和并发技术(另外弄一个专题)
+#做个小专题,随机数和伪随机算法
+#做个小专题lua中的遍历机制详解
+#编程语言范式(在学完BNF之后,回顾一下.表达式,函数,字面值,流程控制,异常处理,数据结构,类型系统)
 更多格式还不能发.应该先把后续的两章给定下来.
 模块
+
+lua语言的编译
+lua和C的交互
+
+C语言
+
+zsh
+gcc
+gdb
+emacs
+
+lua拓展和包管理
