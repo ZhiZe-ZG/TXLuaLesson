@@ -540,6 +540,7 @@ Usually, error adds some information about the error position at the beginning o
 _G
 
 A global variable (not a function) that holds the global environment (see §2.2). Lua itself does not use this variable; changing its value does not affect any environment, nor vice versa.
+
 getmetatable (object)
 
 If object does not have a metatable, returns nil. Otherwise, if the object's metatable has a __metatable field, returns the associated value. Otherwise, returns the metatable of the given object.
