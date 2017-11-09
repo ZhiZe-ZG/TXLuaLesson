@@ -197,13 +197,6 @@ Lua is a free-form language. It ignores spaces (including new lines) and comment
 
 Names (also called identifiers) in Lua can be any string of letters, digits, and underscores, not beginning with a digit and not being a reserved word. Identifiers are used to name variables, table fields, and labels.
 
-The following keywords are reserved and cannot be used as names:
-
-                        end
-      for                    in
-     local         
-Lua is a case-sensitive language: and is a reserved word, but And and AND are two different, valid names. As a convention, programs should avoid creating names that start with an underscore followed by one or more uppercase letters (such as _VERSION).
-
 The following strings denote other tokens:
 
      +     -     *     /     %     ^     #
@@ -259,12 +252,6 @@ Chunks can also be precompiled into binary form; see program luac and function s
 
 3.3.5 – For Statement
 
-The for statement has two forms: one numerical and one generic.
-
-The numerical for loop repeats a block of code while a control variable runs through an arithmetic progression. It has the following syntax:
-
-	stat ::= for Name ‘=’ exp ‘,’ exp [‘,’ exp] do block end
-
 The generic for statement works over functions, called iterators. On each iteration, the iterator function is called to produce a new value, stopping when this new value is nil. The generic for loop has the following syntax:
 
 	stat ::= for namelist in explist do block end
@@ -307,7 +294,6 @@ The basic expressions in Lua are the following:
 
 	exp ::= prefixexp
 	exp ::= tableconstructor
-	exp ::= ‘...’
 	exp ::= exp binop exp
 	exp ::= unop exp
 	prefixexp ::= var | functioncall | ‘(’ exp ‘)’
@@ -574,10 +560,6 @@ setmetatable (table, metatable)
 Sets the metatable for the given table. (To change the metatable of other types from Lua code, you must use the debug library (§6.10).) If metatable is nil, removes the metatable of the given table. If the original metatable has a __metatable field, raises an error.
 
 This function returns table.
-
-_VERSION
-
-A global variable (not a function) that holds a string containing the running Lua version. The current value of this variable is "Lua 5.3".
 
 xpcall (f, msgh [, arg1, ···])
 
