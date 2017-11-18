@@ -15,11 +15,6 @@ add xx to yy
 模块是一个专门的Stage,需要前置是Stage4理解函数,Stage5表结构
 数据结构是一个专门的模块.用表结构实现其他.
 
-# 修改stage5的流程图
-在给0X2C插入后继
-*0X33迭代器
-
-
 动态代码编译
 (Stage3字符串处理 and Stage4理解函数)
 Stage7模块
