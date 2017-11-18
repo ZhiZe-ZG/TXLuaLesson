@@ -44,57 +44,6 @@ Whenever there is an error, an error object (also called an error message) is pr
 
 When you use xpcall or lua_pcall, you may give a message handler to be called in case of errors. This function is called with the original error object and returns a new error object. It is called before the error unwinds the stack, so that it can gather more information about the error, for instance by inspecting the stack and creating a stack traceback. This message handler is still protected by the protected call; so, an error inside the message handler will call the message handler again. If this loop goes on for too long, Lua breaks it and returns an appropriate message. (The message handler is called only for regular runtime errors. It is not called for memory-allocation errors nor for errors while running finalizers.)
 
-2.4 – Metatables and Metamethods
-
-Every value in Lua can have a metatable. This metatable is an ordinary Lua table that defines the behavior of the original value under certain special operations. You can change several aspects of the behavior of operations over a value by setting specific fields in its metatable. For instance, when a non-numeric value is the operand of an addition, Lua checks for a function in the field "__add" of the value's metatable. If it finds one, Lua calls this function to perform the addition.
-
-The key for each event in a metatable is a string with the event name prefixed by two underscores; the corresponding values are called metamethods. In the previous example, the key is "__add" and the metamethod is the function that performs the addition.
-
-You can query the metatable of any value using the getmetatable function. Lua queries metamethods in metatables using a raw access (see rawget). So, to retrieve the metamethod for event ev in object o, Lua does the equivalent to the following code:
-
-     rawget(getmetatable(o) or {}, "__ev")
-You can replace the metatable of tables using the setmetatable function. You cannot change the metatable of other types from Lua code (except by using the debug library (§6.10)); you should use the C API for that.
-
-Tables and full userdata have individual metatables (although multiple tables and userdata can share their metatables). Values of all other types share one single metatable per type; that is, there is one single metatable for all numbers, one for all strings, etc. By default, a value has no metatable, but the string library sets a metatable for the string type (see §6.4).
-
-A metatable controls how an object behaves in arithmetic operations, bitwise operations, order comparisons, concatenation, length operation, calls, and indexing. A metatable also can define a function to be called when a userdata or a table is garbage collected (§2.5).
-
-For the unary operators (negation, length, and bitwise NOT), the metamethod is computed and called with a dummy second operand, equal to the first one. This extra operand is only to simplify Lua's internals (by making these operators behave like a binary operation) and may be removed in future versions. (For most uses this extra operand is irrelevant.)
-
-A detailed list of events controlled by metatables is given next. Each operation is identified by its corresponding key.
-
-__add: the addition (+) operation. If any operand for an addition is not a number (nor a string coercible to a number), Lua will try to call a metamethod. First, Lua will check the first operand (even if it is valid). If that operand does not define a metamethod for __add, then Lua will check the second operand. If Lua can find a metamethod, it calls the metamethod with the two operands as arguments, and the result of the call (adjusted to one value) is the result of the operation. Otherwise, it raises an error.
-__sub: the subtraction (-) operation. Behavior similar to the addition operation.
-__mul: the multiplication (*) operation. Behavior similar to the addition operation.
-__div: the division (/) operation. Behavior similar to the addition operation.
-__mod: the modulo (%) operation. Behavior similar to the addition operation.
-__pow: the exponentiation (^) operation. Behavior similar to the addition operation.
-__unm: the negation (unary -) operation. Behavior similar to the addition operation.
-__idiv: the floor division (//) operation. Behavior similar to the addition operation.
-__band: the bitwise AND (&) operation. Behavior similar to the addition operation, except that Lua will try a metamethod if any operand is neither an integer nor a value coercible to an integer (see §3.4.3).
-__bor: the bitwise OR (|) operation. Behavior similar to the bitwise AND operation.
-__bxor: the bitwise exclusive OR (binary ~) operation. Behavior similar to the bitwise AND operation.
-__bnot: the bitwise NOT (unary ~) operation. Behavior similar to the bitwise AND operation.
-__shl: the bitwise left shift (<<) operation. Behavior similar to the bitwise AND operation.
-__shr: the bitwise right shift (>>) operation. Behavior similar to the bitwise AND operation.
-__concat: the concatenation (..) operation. Behavior similar to the addition operation, except that Lua will try a metamethod if any operand is neither a string nor a number (which is always coercible to a string).
-__len: the length (#) operation. If the object is not a string, Lua will try its metamethod. If there is a metamethod, Lua calls it with the object as argument, and the result of the call (always adjusted to one value) is the result of the operation. If there is no metamethod but the object is a table, then Lua uses the table length operation (see §3.4.7). Otherwise, Lua raises an error.
-__eq: the equal (==) operation. Behavior similar to the addition operation, except that Lua will try a metamethod only when the values being compared are either both tables or both full userdata and they are not primitively equal. The result of the call is always converted to a boolean.
-__lt: the less than (<) operation. Behavior similar to the addition operation, except that Lua will try a metamethod only when the values being compared are neither both numbers nor both strings. The result of the call is always converted to a boolean.
-__le: the less equal (<=) operation. Unlike other operations, the less-equal operation can use two different events. First, Lua looks for the __le metamethod in both operands, like in the less than operation. If it cannot find such a metamethod, then it will try the __lt metamethod, assuming that a <= b is equivalent to not (b < a). As with the other comparison operators, the result is always a boolean. (This use of the __lt event can be removed in future versions; it is also slower than a real __le metamethod.)
-__index: The indexing access table[key]. This event happens when table is not a table or when key is not present in table. The metamethod is looked up in table.
-Despite the name, the metamethod for this event can be either a function or a table. If it is a function, it is called with table and key as arguments, and the result of the call (adjusted to one value) is the result of the operation. If it is a table, the final result is the result of indexing this table with key. (This indexing is regular, not raw, and therefore can trigger another metamethod.)
-
-__newindex: The indexing assignment table[key] = value. Like the index event, this event happens when table is not a table or when key is not present in table. The metamethod is looked up in table.
-Like with indexing, the metamethod for this event can be either a function or a table. If it is a function, it is called with table, key, and value as arguments. If it is a table, Lua does an indexing assignment to this table with the same key and value. (This assignment is regular, not raw, and therefore can trigger another metamethod.)
-
-Whenever there is a __newindex metamethod, Lua does not perform the primitive assignment. (If necessary, the metamethod itself can call rawset to do the assignment.)
-
-__call: The call operation func(args). This event happens when Lua tries to call a non-function value (that is, func is not a function). The metamethod is looked up in func. If present, the metamethod is called with func as its first argument, followed by the arguments of the original call (args). All results of the call are the result of the operation. (This is the only metamethod that allows multiple results.)
-It is a good practice to add all needed metamethods to a table before setting it as a metatable of some object. In particular, the __gc metamethod works only when this order is followed (see §2.5.1).
-
-Because metatables are regular tables, they can contain arbitrary fields, not only the event names defined above. Some functions in the standard library (e.g., tostring) use other fields in metatables for their own purposes.
-
 2.5 – Garbage Collection
 
 Lua performs automatic memory management. This means that you do not have to worry about allocating memory for new objects or freeing it when the objects are no longer needed. Lua manages memory automatically by running a garbage collector to collect all dead objects (that is, objects that are no longer accessible from Lua). All memory used by Lua is subject to automatic management: strings, tables, userdata, functions, threads, internal structures, etc.
@@ -258,41 +207,6 @@ A chunk is also a block (see §3.3.2), and so local variables can be declared in
 
 The visibility rules for local variables are explained in §3.5.
 
-3.4 – Expressions
-
-The basic expressions in Lua are the following:
-
-	exp ::= prefixexp
-	exp ::= tableconstructor
-	exp ::= exp binop exp
-	exp ::= unop exp
-	prefixexp ::= var | functioncall | ‘(’ exp ‘)’
-Numerals and literal strings are explained in §3.1; variables are explained in §3.2; function definitions are explained in §3.4.11; function calls are explained in §3.4.10; table constructors are explained in §3.4.9. Vararg expressions, denoted by three dots ('...'), can only be used when directly inside a vararg function; they are explained in §3.4.11.
-
-Binary operators comprise arithmetic operators (see §3.4.1), bitwise operators (see §3.4.2), relational operators (see §3.4.4), logical operators (see §3.4.5), and the concatenation operator (see §3.4.6). Unary operators comprise the unary minus (see §3.4.1), the unary bitwise NOT (see §3.4.2), the unary logical not (see §3.4.5), and the unary length operator (see §3.4.7).
-
-Both function calls and vararg expressions can result in multiple values. If a function call is used as a statement (see §3.3.6), then its return list is adjusted to zero elements, thus discarding all returned values. If an expression is used as the last (or the only) element of a list of expressions, then no adjustment is made (unless the expression is enclosed in parentheses). In all other contexts, Lua adjusts the result list to one element, either discarding all values except the first one or adding a single nil if there are no values.
-
-Here are some examples:
-
-     f()                -- adjusted to 0 results
-     g(f(), x)          -- f() is adjusted to 1 result
-     g(x, f())          -- g gets x plus all results from f()
-     a,b,c = f(), x     -- f() is adjusted to 1 result (c gets nil)
-     a,b = ...          -- a gets the first vararg parameter, b gets
-                        -- the second (both a and b can get nil if there
-                        -- is no corresponding vararg parameter)
-     
-     a,b,c = x, f()     -- f() is adjusted to 2 results
-     a,b,c = f()        -- f() is adjusted to 3 results
-     return f()         -- returns all results from f()
-     return ...         -- returns all received vararg parameters
-     return x,y,f()     -- returns x, y, and all results from f()
-     {f()}              -- creates a list with all results from f()
-     {...}              -- creates a list with all vararg parameters
-     {f(), nil}         -- f() is adjusted to 1 result
-Any expression enclosed in parentheses always results in only one value. Thus, (f(x,y,z)) is always a single value, even if f returns several values. (The value of (f(x,y,z)) is the first value returned by f or nil if f does not return any values.)
-
 3.4.3 – Coercions and Conversions
 
 Lua provides some automatic conversions between some types and representations at run time.
@@ -303,166 +217,6 @@ The conversion from strings to numbers goes as follows: First, the string is con
 All conversions from strings to numbers accept both a dot and the current locale mark as the radix character. (The Lua lexer, however, accepts only a dot.)
 
 The conversion from numbers to strings uses a non-specified human-readable format. For complete control over how numbers are converted to strings, use the format function from the string library (see string.format).
-
-3.4.4 – Relational Operators
-
-Equality (==) first compares the type of its operands. If the types are different, then the result is false. Otherwise, the values of the operands are compared. Strings are compared in the obvious way. Numbers are equal if they denote the same mathematical value.
-
-Tables, userdata, and threads are compared by reference: two objects are considered equal only if they are the same object. Every time you create a new object (a table, userdata, or thread), this new object is different from any previously existing object. Closures with the same reference are always equal. Closures with any detectable difference (different behavior, different definition) are always different.
-
-You can change the way that Lua compares tables and userdata by using the "eq" metamethod (see §2.4).
-
-Equality comparisons do not convert strings to numbers or vice versa. Thus, "0"==0 evaluates to false, and t[0] and t["0"] denote different entries in a table.
-
-The operator ~= is exactly the negation of equality (==).
-
-The order operators work as follows. If both arguments are numbers, then they are compared according to their mathematical values (regardless of their subtypes). Otherwise, if both arguments are strings, then their values are compared according to the current locale. Otherwise, Lua tries to call the "lt" or the "le" metamethod (see §2.4). A comparison a > b is translated to b < a and a >= b is translated to b <= a.
-
-Following the IEEE 754 standard, NaN is considered neither smaller than, nor equal to, nor greater than any value (including itself).
-
-3.4.8 – Precedence
-
-Operator precedence in Lua follows the table below, from lower to higher priority:
-
-     or
-     and
-     <     >     <=    >=    ~=    ==
-     |
-     ~
-     &
-     <<    >>
-     ..
-     +     -
-     *     /     //    %
-     unary operators (not   #     -     ~)
-     ^
-As usual, you can use parentheses to change the precedences of an expression. The concatenation ('..') and exponentiation ('^') operators are right associative. All other binary operators are left associative.
-
-3.4.10 – Function Calls
-
-A function call in Lua has the following syntax:
-
-	functioncall ::= prefixexp args
-In a function call, first prefixexp and args are evaluated. If the value of prefixexp has type function, then this function is called with the given arguments. Otherwise, the prefixexp "call" metamethod is called, having as first parameter the value of prefixexp, followed by the original call arguments (see §2.4).
-
-The form
-
-	functioncall ::= prefixexp ‘:’ Name args
-can be used to call "methods". A call v:name(args) is syntactic sugar for v.name(v,args), except that v is evaluated only once.
-
-Arguments have the following syntax:
-
-	args ::= ‘(’ [explist] ‘)’
-	args ::= tableconstructor
-	args ::= LiteralString
-All argument expressions are evaluated before the call. A call of the form f{fields} is syntactic sugar for f({fields}); that is, the argument list is a single new table. A call of the form f'string' (or f"string" or f[[string]]) is syntactic sugar for f('string'); that is, the argument list is a single literal string.
-
-A call of the form return functioncall is called a tail call. Lua implements proper tail calls (or proper tail recursion): in a tail call, the called function reuses the stack entry of the calling function. Therefore, there is no limit on the number of nested tail calls that a program can execute. However, a tail call erases any debug information about the calling function. Note that a tail call only happens with a particular syntax, where the return has one single function call as argument; this syntax makes the calling function return exactly the returns of the called function. So, none of the following examples are tail calls:
-
-     return (f(x))        -- results adjusted to 1
-     return 2 * f(x)
-     return x, f(x)       -- additional results
-     f(x); return         -- results discarded
-     return x or f(x)     -- results adjusted to 1
-3.4.11 – Function Definitions
-
-The syntax for function definition is
-
-	functiondef ::= function funcbody
-	funcbody ::= ‘(’ [parlist] ‘)’ block end
-The following syntactic sugar simplifies function definitions:
-
-	stat ::= function funcname funcbody
-	stat ::= local function Name funcbody
-	funcname ::= Name {‘.’ Name} [‘:’ Name]
-The statement
-
-     function f () body end
-translates to
-
-     f = function () body end
-The statement
-
-     function t.a.b.c.f () body end
-translates to
-
-     t.a.b.c.f = function () body end
-The statement
-
-     local function f () body end
-translates to
-
-     local f; f = function () body end
-not to
-
-     local f = function () body end
-(This only makes a difference when the body of the function contains references to f.)
-
-A function definition is an executable expression, whose value has type function. When Lua precompiles a chunk, all its function bodies are precompiled too. Then, whenever Lua executes the function definition, the function is instantiated (or closed). This function instance (or closure) is the final value of the expression.
-
-Parameters act as local variables that are initialized with the argument values:
-
-	parlist ::= namelist [‘,’ ‘...’] | ‘...’
-When a function is called, the list of arguments is adjusted to the length of the list of parameters, unless the function is a vararg function, which is indicated by three dots ('...') at the end of its parameter list. A vararg function does not adjust its argument list; instead, it collects all extra arguments and supplies them to the function through a vararg expression, which is also written as three dots. The value of this expression is a list of all actual extra arguments, similar to a function with multiple results. If a vararg expression is used inside another expression or in the middle of a list of expressions, then its return list is adjusted to one element. If the expression is used as the last element of a list of expressions, then no adjustment is made (unless that last expression is enclosed in parentheses).
-
-As an example, consider the following definitions:
-
-     function f(a, b) end
-     function g(a, b, ...) end
-     function r() return 1,2,3 end
-Then, we have the following mapping from arguments to parameters and to the vararg expression:
-
-     CALL            PARAMETERS
-     
-     f(3)             a=3, b=nil
-     f(3, 4)          a=3, b=4
-     f(3, 4, 5)       a=3, b=4
-     f(r(), 10)       a=1, b=10
-     f(r())           a=1, b=2
-     
-     g(3)             a=3, b=nil, ... -->  (nothing)
-     g(3, 4)          a=3, b=4,   ... -->  (nothing)
-     g(3, 4, 5, 8)    a=3, b=4,   ... -->  5  8
-     g(5, r())        a=5, b=1,   ... -->  2  3
-Results are returned using the return statement (see §3.3.4). If control reaches the end of a function without encountering a return statement, then the function returns with no results.
-
-There is a system-dependent limit on the number of values that a function may return. This limit is guaranteed to be larger than 1000.
-
-The colon syntax is used for defining methods, that is, functions that have an implicit extra parameter self. Thus, the statement
-
-     function t.a.b.c:f (params) body end
-is syntactic sugar for
-
-     t.a.b.c.f = function (self, params) body end
-3.5 – Visibility Rules
-
-Lua is a lexically scoped language. The scope of a local variable begins at the first statement after its declaration and lasts until the last non-void statement of the innermost block that includes the declaration. Consider the following example:
-
-     x = 10                -- global variable
-     do                    -- new block
-       local x = x         -- new 'x', with value 10
-       print(x)            --> 10
-       x = x+1
-       do                  -- another block
-         local x = x+1     -- another 'x'
-         print(x)          --> 12
-       end
-       print(x)            --> 11
-     end
-     print(x)              --> 10  (the global one)
-Notice that, in a declaration like local x = x, the new x being declared is not in scope yet, and so the second x refers to the outside variable.
-
-Because of the lexical scoping rules, local variables can be freely accessed by functions defined inside their scope. A local variable used by an inner function is called an upvalue, or external local variable, inside the inner function.
-
-Notice that each execution of a local statement defines new local variables. Consider the following example:
-
-     a = {}
-     local x = 20
-     for i=1,10 do
-       local y = 0
-       a[i] = function () y=y+1; return x+y end
-     end
-The loop creates ten closures (that is, ten instances of the anonymous function). Each of these closures uses a different y variable, while all of them share the same x.
 
 6.1 – Basic Functions
 
@@ -493,10 +247,6 @@ error (message [, level])
 Terminates the last protected function called and returns message as the error object. Function error never returns.
 Usually, error adds some information about the error position at the beginning of the message, if the message is a string. The level argument specifies how to get the error position. With level 1 (the default), the error position is where the error function was called. Level 2 points the error to where the function that called error was called; and so on. Passing a level 0 avoids the addition of error position information to the message.
 
-getmetatable (object)
-
-If object does not have a metatable, returns nil. Otherwise, if the object's metatable has a __metatable field, returns the associated value. Otherwise, returns the metatable of the given object.
-
 load (chunk [, chunkname [, mode [, env]]])
 
 Loads a chunk.
@@ -520,12 +270,6 @@ Similar to load, but gets the chunk from file filename or from the standard inpu
 pcall (f [, arg1, ···])
 
 Calls function f with the given arguments in protected mode. This means that any error inside f is not propagated; instead, pcall catches the error and returns a status code. Its first result is the status code (a boolean), which is true if the call succeeds without errors. In such case, pcall also returns all results from the call, after this first result. In case of any error, pcall returns false plus the error message.
-
-setmetatable (table, metatable)
-
-Sets the metatable for the given table. (To change the metatable of other types from Lua code, you must use the debug library (§6.10).) If metatable is nil, removes the metatable of the given table. If the original metatable has a __metatable field, raises an error.
-
-This function returns table.
 
 xpcall (f, msgh [, arg1, ···])
 
@@ -831,9 +575,6 @@ Here is the complete syntax of Lua in extended BNF. As usual in extended BNF, {A
 		 and | or
 
 	unop ::= ‘-’ | not | ‘#’ | ‘~’
-
-last update: fri feb 3 07:26:45 brst 2017
-
 
 Lua Welcome to Lua 5.3
 
