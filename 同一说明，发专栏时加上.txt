@@ -12,6 +12,9 @@
 add xx to yy
 把xx加到yy中
 
+minor changes
+小修改
+
 模块是一个专门的Stage,需要前置是Stage4理解函数,Stage5表结构
 数据结构是一个专门的模块.用表结构实现其他.
 
@@ -41,18 +44,6 @@ debug
 讲一点内存管理
 
 独立Lua和Lua调用bash命令
-
-
-迭代器的原理解析(独立专题,放在基础内容都完结以后)
-新增闭包和迭代器章节
-  function list_iter (t)
-      local i = 0
-      local n = table.getn(t)
-      return function ()
-               i = i + 1
-               if i <= n then return t[i] end
-             end
-    end
 
 独立lua的相关内容(命令行参数等)
 
