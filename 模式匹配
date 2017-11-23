@@ -1,6 +1,10 @@
 string.find (s, pattern [, init [, plain]])
 
-Looks for the first match of pattern (see §6.4.1) in the string s. If it finds a match, then find returns the indices of s where this occurrence starts and ends; otherwise, it returns nil. A third, optional numeric argument init specifies where to start the search; its default value is 1 and can be negative. A value of true as a fourth, optional argument plain turns off the pattern matching facilities, so the function does a plain "find substring" operation, with no characters in pattern being considered magic. Note that if plain is given, then init must be given as well.
+plain为true,临时匹配普通文本.不作为正则表达式.
+
+A value of true as a fourth, optional argument plain turns off the pattern matching facilities, 
+so the function does a plain "find substring" operation, with no characters in pattern being considered magic.
+Note that if plain is given, then init must be given as well.
 
 If the pattern has captures, then in a successful match the captured values are also returned, after the two indices.
 
@@ -65,24 +69,11 @@ Looks for the first match of pattern (see §6.4.1) in the string s. If it finds 
 
 6.4.1 – Patterns
 
-Patterns in Lua are described by regular strings, which are interpreted as patterns by the pattern-matching functions string.find, string.gmatch, string.gsub, and string.match. This section describes the syntax and the meaning (that is, what they match) of these strings.
-
 Character Class:
 
 A character class is used to represent a set of characters. The following combinations are allowed in describing a character class:
 
 x: (where x is not one of the magic characters ^$()%.[]*+-?) represents the character x itself.
-.: (a dot) represents all characters.
-%a: represents all letters.
-%c: represents all control characters.
-%d: represents all digits.
-%g: represents all printable characters except space.
-%l: represents all lowercase letters.
-%p: represents all punctuation characters.
-%s: represents all space characters.
-%u: represents all uppercase letters.
-%w: represents all alphanumeric characters.
-%x: represents all hexadecimal digits.
 %x: (where x is any non-alphanumeric character) represents the character x. This is the standard way to escape the magic characters. Any non-alphanumeric character (including all punctuation characters, even the non-magical) can be preceded by a '%' when used to represent itself in a pattern.
 [set]: represents the class which is the union of all characters in set. A range of characters can be specified by separating the end characters of the range, in ascending order, with a '-'. All classes %x described above can also be used as components in set. All other characters in set represent themselves. For example, [%w_] (or [_%w]) represents all alphanumeric characters plus the underscore, [0-7] represents the octal digits, and [0-7%l%-] represents the octal digits plus the lowercase letters plus the '-' character.
 You can put a closing square bracket in a set by positioning it as the first character in the set. You can put an hyphen in a set by positioning it as the first or the last character in the set. (You can also use an escape for both cases.)
