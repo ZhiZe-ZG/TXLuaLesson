@@ -169,44 +169,6 @@ A chunk can be stored in a file or in a string inside the host program. To execu
 
 Chunks can also be precompiled into binary form; see program luac and function string.dump for details. Programs in source and compiled forms are interchangeable; Lua automatically detects the file type and acts accordingly (see load).
 
-3.3.5 – For Statement
-
-The generic for statement works over functions, called iterators. On each iteration, the iterator function is called to produce a new value, stopping when this new value is nil. The generic for loop has the following syntax:
-
-	stat ::= for namelist in explist do block end
-	namelist ::= Name {‘,’ Name}
-A for statement like
-
-     for var_1, ···, var_n in explist do block end
-is equivalent to the code:
-
-     do
-       local f, s, var = explist
-       while true do
-         local var_1, ···, var_n = f(s, var)
-         if var_1 == nil then break end
-         var = var_1
-         block
-       end
-     end
-Note the following:
-
-explist is evaluated only once. Its results are an iterator function, a state, and an initial value for the first iterator variable.
-f, s, and var are invisible variables. The names are here for explanatory purposes only.
-You can use break to exit a for loop.
-The loop variables var_i are local to the loop; you cannot use their values after the for ends. If you need these values, then assign them to other variables before breaking or exiting the loop.
-
-3.3.7 – Local Declarations
-
-Local variables can be declared anywhere inside a block. The declaration can include an initial assignment:
-
-	stat ::= local namelist [‘=’ explist]
-If present, an initial assignment has the same semantics of a multiple assignment (see §3.3.3). Otherwise, all variables are initialized with nil.
-
-A chunk is also a block (see §3.3.2), and so local variables can be declared in a chunk outside any explicit block.
-
-The visibility rules for local variables are explained in §3.5.
-
 3.4.3 – Coercions and Conversions
 
 Lua provides some automatic conversions between some types and representations at run time.
@@ -430,7 +392,13 @@ Make the n1-th upvalue of the Lua closure f1 refer to the n2-th upvalue of the L
 
 7 – Lua Standalone
 
-Although Lua has been designed as an extension language, to be embedded in a host C program, it is also frequently used as a standalone language. An interpreter for Lua as a standalone language, called simply lua, is provided with the standard distribution. The standalone interpreter includes all standard libraries, including the debug library. Its usage is:
+Although Lua has been designed as an extension language, 
+to be embedded in a host C program, 
+it is also frequently used as a standalone language. 
+An interpreter for Lua as a standalone language, called simply lua, 
+is provided with the standard distribution. 
+The standalone interpreter includes all standard libraries, 
+including the debug library. Its usage is:
 
      lua [options] [script [args]]
 The options are:
@@ -442,11 +410,19 @@ The options are:
 -E: ignores environment variables;
 --: stops handling options;
 -: executes stdin as a file and stops handling options.
-After handling its options, lua runs the given script. When called without arguments, lua behaves as lua -v -i when the standard input (stdin) is a terminal, and as lua - otherwise.
 
-When called without option -E, the interpreter checks for an environment variable LUA_INIT_5_3 (or LUA_INIT if the versioned name is not defined) before running any argument. If the variable content has the format @filename, then lua executes the file. Otherwise, lua executes the string itself.
+After handling its options, 
+lua runs the given script. 
+When called without arguments, 
+lua behaves as lua -v -i when the standard input (stdin) is a terminal, and as lua - otherwise.
 
-When called with option -E, besides ignoring LUA_INIT, Lua also ignores the values of LUA_PATH and LUA_CPATH, setting the values of package.path and package.cpath with the default paths defined in luaconf.h.
+When called without option -E, 
+the interpreter checks for an environment variable LUA_INIT_5_3 
+(or LUA_INIT if the versioned name is not defined) before running any argument. 
+If the variable content has the format @filename, then lua executes the file. Otherwise, lua executes the string itself.
+
+When called with option -E, besides ignoring LUA_INIT, 
+Lua also ignores the values of LUA_PATH and LUA_CPATH, setting the values of package.path and package.cpath with the default paths defined in luaconf.h.
 
 All options are handled in order, except -i and -E. For instance, an invocation like
 
@@ -466,7 +442,10 @@ If there is no script in the call, the interpreter name goes to index 0, followe
      $ lua -e "print(arg[1])"
 will print "-e". If there is a script, the script is called with parameters arg[1], ···, arg[#arg]. (Like all chunks in Lua, the script is compiled as a vararg function.)
 
-In interactive mode, Lua repeatedly prompts and waits for a line. After reading a line, Lua first try to interpret the line as an expression. If it succeeds, it prints its value. Otherwise, it interprets the line as a statement. If you write an incomplete statement, the interpreter waits for its completion by issuing a different prompt.
+In interactive mode, Lua repeatedly prompts and waits for a line. 
+After reading a line, Lua first try to interpret the line as an expression. 
+If it succeeds, it prints its value. Otherwise, it interprets the line as a statement. 
+If you write an incomplete statement, the interpreter waits for its completion by issuing a different prompt.
 
 If the global variable _PROMPT contains a string, then its value is used as the prompt. Similarly, if the global variable _PROMPT2 contains a string, its value is used as the secondary prompt (issued during incomplete statements).
 
@@ -483,14 +462,6 @@ To allow the use of Lua as a script interpreter in Unix systems, the standalone 
 is a more portable solution.)
 
 8 – Incompatibilities with the Previous Version
-
-Here we list the incompatibilities that you may find when moving a program from Lua 5.2 to Lua 5.3. You can avoid some incompatibilities by compiling Lua with appropriate options (see file luaconf.h). However, all these compatibility options will be removed in the future.
-
-Lua versions can always change the C API in ways that do not imply source-code changes in a program, such as the numeric values for constants or the implementation of functions as macros. Therefore, you should not assume that binaries are compatible between different Lua versions. Always recompile clients of the Lua API when using a new version.
-
-Similarly, Lua versions can always change the internal representation of precompiled chunks; precompiled chunks are not compatible between different Lua versions.
-
-The standard paths in the official distribution may change between versions.
 
 8.1 – Changes in the Language
 
