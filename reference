@@ -251,46 +251,6 @@ Returns a string containing a binary representation (a binary chunk) of the give
 
 Functions with upvalues have only their number of upvalues saved. When (re)loaded, those upvalues receive fresh instances containing nil. (You can use the debug library to serialize and reload the upvalues of a function in a way adequate to your needs.)
 
-6.9 – Operating System Facilities
-
-This library is implemented through table os.
-
-os.execute ([command])
-
-This function is equivalent to the ISO C function system. It passes command to be executed by an operating system shell. Its first result is true if the command terminated successfully, or nil otherwise. After this first result the function returns a string plus a number, as follows:
-
-"exit": the command terminated normally; the following number is the exit status of the command.
-"signal": the command was terminated by a signal; the following number is the signal that terminated the command.
-When called without a command, os.execute returns a boolean that is true if a shell is available.
-
-os.exit ([code [, close]])
-
-Calls the ISO C function exit to terminate the host program. If code is true, the returned status is EXIT_SUCCESS; if code is false, the returned status is EXIT_FAILURE; if code is a number, the returned status is this number. The default value for code is true.
-
-If the optional second argument close is true, closes the Lua state before exiting.
-
-os.getenv (varname)
-
-Returns the value of the process environment variable varname, or nil if the variable is not defined.
-
-os.setlocale (locale [, category])
-
-Sets the current locale of the program. locale is a system-dependent string specifying a locale; category is an optional string describing which category to change: "all", "collate", "ctype", "monetary", "numeric", or "time"; the default category is "all". The function returns the name of the new locale, or nil if the request cannot be honored.
-
-If locale is the empty string, the current locale is set to an implementation-defined native locale. If locale is the string "C", the current locale is set to the standard C locale.
-
-When called with nil as the first argument, this function only returns the name of the current locale for the given category.
-
-This function may be not thread safe because of its reliance on C function setlocale.
-
-os.tmpname ()
-
-Returns a string with a file name that can be used for a temporary file. The file must be explicitly opened before its use and explicitly removed when no longer needed.
-
-On POSIX systems, this function also creates a file with that name, to avoid security risks. (Someone else might create the file with wrong permissions in the time between getting the name and creating the file.) You still have to open the file to use it and to remove it (even if you do not use it).
-
-When possible, you may prefer to use io.tmpfile, which automatically removes the file when the program ends.
-
 6.10 – The Debug Library
 
 This library provides the functionality of the debug interface (§4.9) to Lua programs. You should exert care when using this library. Several of its functions violate basic assumptions about Lua code (e.g., that variables local to a function cannot be accessed from outside; that userdata metatables cannot be changed by Lua code; that Lua programs do not crash) and therefore can compromise otherwise secure code. Moreover, some functions in this library may be slow.
@@ -390,58 +350,6 @@ debug.upvaluejoin (f1, n1, f2, n2)
 
 Make the n1-th upvalue of the Lua closure f1 refer to the n2-th upvalue of the Lua closure f2.
 
-7 – Lua Standalone
-
-After handling its options, 
-lua runs the given script. 
-When called without arguments, 
-lua behaves as lua -v -i when the standard input (stdin) is a terminal, and as lua - otherwise.
-
-When called without option -E, 
-the interpreter checks for an environment variable LUA_INIT_5_3 
-(or LUA_INIT if the versioned name is not defined) before running any argument. 
-If the variable content has the format @filename, then lua executes the file. Otherwise, lua executes the string itself.
-
-When called with option -E, besides ignoring LUA_INIT, 
-Lua also ignores the values of LUA_PATH and LUA_CPATH, setting the values of package.path and package.cpath with the default paths defined in luaconf.h.
-
-All options are handled in order, except -i and -E. For instance, an invocation like
-
-     $ lua -e'a=1' -e 'print(a)' script.lua
-will first set a to 1, then print the value of a, and finally run the file script.lua with no arguments. (Here $ is the shell prompt. Your prompt may be different.)
-
-Before running any code, lua collects all command-line arguments in a global table called arg. The script name goes to index 0, the first argument after the script name goes to index 1, and so on. Any arguments before the script name (that is, the interpreter name plus its options) go to negative indices. For instance, in the call
-
-     $ lua -la b.lua t1 t2
-the table is like this:
-
-     arg = { [-2] = "lua", [-1] = "-la",
-             [0] = "b.lua",
-             [1] = "t1", [2] = "t2" }
-If there is no script in the call, the interpreter name goes to index 0, followed by the other arguments. For instance, the call
-
-     $ lua -e "print(arg[1])"
-will print "-e". If there is a script, the script is called with parameters arg[1], ···, arg[#arg]. (Like all chunks in Lua, the script is compiled as a vararg function.)
-
-In interactive mode, Lua repeatedly prompts and waits for a line. 
-After reading a line, Lua first try to interpret the line as an expression. 
-If it succeeds, it prints its value. Otherwise, it interprets the line as a statement. 
-If you write an incomplete statement, the interpreter waits for its completion by issuing a different prompt.
-
-If the global variable _PROMPT contains a string, then its value is used as the prompt. Similarly, if the global variable _PROMPT2 contains a string, its value is used as the secondary prompt (issued during incomplete statements).
-
-In case of unprotected errors in the script, the interpreter reports the error to the standard error stream. If the error object is not a string but has a metamethod __tostring, the interpreter calls this metamethod to produce the final message. Otherwise, the interpreter converts the error object to a string and adds a stack traceback to it.
-
-When finishing normally, the interpreter closes its main Lua state (see lua_close). The script can avoid this step by calling os.exit to terminate.
-
-To allow the use of Lua as a script interpreter in Unix systems, the standalone interpreter skips the first line of a chunk if it starts with #. Therefore, Lua scripts can be made into executable programs by using chmod +x and the #! form, as in
-
-     #!/usr/local/bin/lua
-(Of course, the location of the Lua interpreter may be different in your machine. If lua is in your PATH, then
-
-     #!/usr/bin/env lua
-is a more portable solution.)
-
 8 – Incompatibilities with the Previous Version
 
 8.1 – Changes in the Language
@@ -472,8 +380,6 @@ Macros to project non-default integer types (luaL_checkint, luaL_optint, luaL_ch
 
 Here is the complete syntax of Lua in extended BNF. As usual in extended BNF, {A} means 0 or more As, and [A] means an optional A. (For operator precedences, see §3.4.8; for a description of the terminals Name, Numeral, and LiteralString, see §3.1.)
 
-
-	chunk ::= block
 
 	block ::= {stat} [retstat]
 
@@ -520,28 +426,6 @@ Here is the complete syntax of Lua in extended BNF. As usual in extended BNF, {A
 	field ::= ‘[’ exp ‘]’ ‘=’ exp | Name ‘=’ exp | exp
 
 	fieldsep ::= ‘,’ | ‘;’
-
-	binop ::=  ‘+’ | ‘-’ | ‘*’ | ‘/’ | ‘//’ | ‘^’ | ‘%’ | 
-		 ‘&’ | ‘~’ | ‘|’ | ‘>>’ | ‘<<’ | ‘..’ | 
-		 ‘<’ | ‘<=’ | ‘>’ | ‘>=’ | ‘==’ | ‘~=’ | 
-		 and | or
-
-	unop ::= ‘-’ | not | ‘#’ | ‘~’
-
-Lua Welcome to Lua 5.3
-
-about · installation · changes · license · reference manual
-About Lua
-
-Lua is a powerful, fast, lightweight, embeddable scripting language developed by a team at PUC-Rio, the Pontifical Catholic University of Rio de Janeiro in Brazil. Lua is free software used in many products and projects around the world.
-
-Lua's official web site provides complete information about Lua, including an executive summary and updated documentation, especially the reference manual, which may differ slightly from the local copy distributed in this package.
-
-Installing Lua
-
-Lua is distributed in source form. You need to build it before using it. Building Lua should be straightforward because Lua is implemented in pure ANSI C and compiles unmodified in all known platforms that have an ANSI C compiler. Lua also compiles unmodified as C++. The instructions given below for building Lua are for Unix-like platforms. See also instructions for other systems and customization options.
-
-If you don't have the time or the inclination to compile Lua yourself, get a binary from LuaBinaries. Try also LuaDist, a multi-platform distribution of Lua that includes batteries.
 
 Building Lua
 
