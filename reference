@@ -140,10 +140,6 @@ This section describes the lexis, the syntax, and the semantics of Lua. In other
 
 Language constructs will be explained using the usual extended BNF notation, in which {a} means 0 or more a's, and [a] means an optional a. Non-terminals are shown like non-terminal, keywords are shown like kword, and other terminal symbols are shown like ‘=’. The complete syntax of Lua can be found in §9 at the end of this manual.
 
-3.1 – Lexical Conventions
-
-A comment starts with a double hyphen (--) anywhere outside a string. If the text immediately after -- is not an opening long bracket, the comment is a short comment, which runs until the end of the line. Otherwise, it is a long comment, which runs until the corresponding closing long bracket. Long comments are frequently used to disable code temporarily.
-
 3.4.3 – Coercions and Conversions
 
 Lua provides some automatic conversions between some types and representations at run time.
