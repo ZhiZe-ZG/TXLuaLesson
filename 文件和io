@@ -1,33 +1,3 @@
-io.input ([file])
-
-When called with a file name, it opens the named file (in text mode), 
-and sets its handle as the default input file. When called with a file handle, 
-it simply sets this file handle as the default input file. When called without parameters, 
-it returns the current default input file.
-
-In case of errors this function raises the error, instead of returning an error code.
-
-io.read (···)
-
-Equivalent to io.input():read(···).
-
-io.output ([file])
-
-Similar to io.input, but operates over the default output file.
-
-io.write (···)
-
-Equivalent to io.output():write(···).
-
-io.close ([file])
-
-Equivalent to file:close(). Without a file, closes the default output file.
-
-io.flush ()
-
-Equivalent to io.output():flush().
-Saves any written data to file.
-
 io.open (filename [, mode])
 
 This function opens a file, in the mode specified in the string mode. In case of success, it returns a new file handle.
@@ -58,24 +28,11 @@ When using explicit file handles, the operation io.open returns a file handle an
 
 Unless otherwise stated, all I/O functions return nil on failure (plus an error message as a second result and a system-dependent error code as a third result) and some value different from nil on success. On non-POSIX systems, the computation of the error message and error code in case of errors may be not thread safe, because they rely on the global C variable errno.
 
-
-io.lines ([filename, ···])
-
-Opens the given file name in read mode and returns an iterator function that works like file:lines(···) over the opened file. When the iterator function detects the end of file, it returns no values (to finish the loop) and automatically closes the file.
-
-The call io.lines() (with no file name) is equivalent to io.input():lines("*l"); that is, it iterates over the lines of the default input file. In this case it does not close the file when the loop ends.
-
-In case of errors this function raises the error, instead of returning an error code.
-
-
-
 io.popen (prog [, mode])
 
 This function is system dependent and is not available on all platforms.
 
 Starts program prog in a separated process and returns a file handle that you can use to read data from this program (if mode is "r", the default) or to write data to this program (if mode is "w").
-
-
 
 io.tmpfile ()
 
@@ -84,8 +41,6 @@ In case of success, returns a handle for a temporary file. This file is opened i
 io.type (obj)
 
 Checks whether obj is a valid file handle. Returns the string "file" if obj is an open file handle, "closed file" if obj is a closed file handle, or nil if obj is not a file handle.
-
-
 
 file:close ()
 
@@ -144,14 +99,6 @@ file:write (···)
 Writes the value of each of its arguments to file. The arguments must be strings or numbers.
 
 In case of success, this function returns file. Otherwise it returns nil plus a string describing the error.
-
-os.remove (filename)
-
-Deletes the file (or empty directory, on POSIX systems) with the given name. If this function fails, it returns nil, plus a string describing the error and the error code. Otherwise, it returns true.
-
-os.rename (oldname, newname)
-
-Renames the file or directory named oldname to newname. If this function fails, it returns nil, plus a string describing the error and the error code. Otherwise, it returns true.
 
 剩下的在文件系统或者动态脚本中介绍.
 
