@@ -1,0 +1,41 @@
+dofile ([filename])
+
+Opens the named file and executes its contents as a Lua chunk.
+ When called without arguments, dofile executes the contents of the standard input (stdin). 
+ Returns all values returned by the chunk. In case of errors, dofile propagates the error to its caller (that is, dofile does not run in protected mode).
+ 
+ 
+load (chunk [, chunkname [, mode [, env]]])
+
+Loads a chunk.
+
+If chunk is a string, the chunk is this string. If chunk is a function, load calls it repeatedly to get the chunk pieces. Each call to chunk must return a string that concatenates with previous results. A return of an empty string, nil, or no value signals the end of the chunk.
+
+If there are no syntactic errors, returns the compiled chunk as a function; otherwise, returns nil plus the error message.
+
+If the resulting function has upvalues, the first upvalue is set to the value of env, if that parameter is given, or to the value of the global environment. Other upvalues are initialized with nil. (When you load a main chunk, the resulting function will always have exactly one upvalue, the _ENV variable (see §2.2). However, when you load a binary chunk created from a function (see string.dump), the resulting function can have an arbitrary number of upvalues.) All upvalues are fresh, that is, they are not shared with any other function.
+
+chunkname is used as the name of the chunk for error messages and debug information (see §4.9). When absent, it defaults to chunk, if chunk is a string, or to "=(load)" otherwise.
+
+The string mode controls whether the chunk can be text or binary (that is, a precompiled chunk). It may be the string "b" (only binary chunks), "t" (only text chunks), or "bt" (both binary and text). The default is "bt".
+
+Lua does not check the consistency of binary chunks. Maliciously crafted binary chunks can crash the interpreter.
+
+loadfile ([filename [, mode [, env]]])
+
+Similar to load, but gets the chunk from file filename or from the standard input, if no file name is given.
+
+
+6.4 – String Manipulation
+
+This library provides generic functions for string manipulation, such as finding and extracting substrings, and pattern matching. When indexing a string in Lua, the first character is at position 1 (not at 0, as in C). Indices are allowed to be negative and are interpreted as indexing backwards, from the end of the string. Thus, the last character is at position -1, and so on.
+
+The string library provides all its functions inside the table string. It also sets a metatable for strings where the __index field points to the string table. Therefore, you can use the string functions in object-oriented style. For instance, string.byte(s,i) can be written as s:byte(i).
+
+The string library assumes one-byte character encodings.
+
+string.dump (function [, strip])
+
+Returns a string containing a binary representation (a binary chunk) of the given function, so that a later load on this string returns a copy of the function (but with new upvalues). If strip is a true value, the binary representation may not include all debug information about the function, to save space.
+
+Functions with upvalues have only their number of upvalues saved. When (re)loaded, those upvalues receive fresh instances containing nil. (You can use the debug library to serialize and reload the upvalues of a function in a way adequate to your needs.)

@@ -22,18 +22,6 @@ Tables, functions, threads, and (full) userdata values are objects: variables do
 
 The library function type returns a string describing the type of a given value (see §6.1).
 
-2.2 – Environments and the Global Environment
-
-As will be discussed in §3.2 and §3.3.3, any reference to a free name (that is, a name not bound to any declaration) var is syntactically translated to _ENV.var. Moreover, every chunk is compiled in the scope of an external local variable named _ENV (see §3.3.2), so _ENV itself is never a free name in a chunk.
-
-Despite the existence of this external _ENV variable and the translation of free names, _ENV is a completely regular name. In particular, you can define new variables and parameters with that name. Each reference to a free name uses the _ENV that is visible at that point in the program, following the usual visibility rules of Lua (see §3.5).
-
-Any table used as the value of _ENV is called an environment.所有的全局变量都是表_ENV的成员.
-
-Lua keeps a distinguished environment called the global environment. This value is kept at a special index in the C registry (see §4.5). In Lua, the global variable _G is initialized with this same value. (_G is never used internally.)
-
-When Lua loads a chunk, the default value for its _ENV upvalue is the global environment (see load). Therefore, by default, free names in Lua code refer to entries in the global environment (and, therefore, they are also called global variables). Moreover, all standard libraries are loaded in the global environment and some functions there operate on that environment. You can use load (or loadfile) to load a chunk with a different environment. (In C, you have to load the chunk and then change the value of its first upvalue.)
-
 2.3 – Error Handling
 
 Because Lua is an embedded extension language, all Lua actions start from C code in the host program calling a function from the Lua library. (When you use Lua standalone, the lua application is the host program.) Whenever an error occurs during the compilation or execution of a Lua chunk, control returns to the host, which can take appropriate measures (such as printing an error message).
@@ -172,33 +160,10 @@ This function is a generic interface to the garbage collector. It performs diffe
 "setstepmul": sets arg as the new value for the step multiplier of the collector (see §2.5). Returns the previous value for step.
 "isrunning": returns a boolean that tells whether the collector is running (i.e., not stopped).
 
-dofile ([filename])
-
-Opens the named file and executes its contents as a Lua chunk. When called without arguments, dofile executes the contents of the standard input (stdin). Returns all values returned by the chunk. In case of errors, dofile propagates the error to its caller (that is, dofile does not run in protected mode).
 error (message [, level])
 
 Terminates the last protected function called and returns message as the error object. Function error never returns.
 Usually, error adds some information about the error position at the beginning of the message, if the message is a string. The level argument specifies how to get the error position. With level 1 (the default), the error position is where the error function was called. Level 2 points the error to where the function that called error was called; and so on. Passing a level 0 avoids the addition of error position information to the message.
-
-load (chunk [, chunkname [, mode [, env]]])
-
-Loads a chunk.
-
-If chunk is a string, the chunk is this string. If chunk is a function, load calls it repeatedly to get the chunk pieces. Each call to chunk must return a string that concatenates with previous results. A return of an empty string, nil, or no value signals the end of the chunk.
-
-If there are no syntactic errors, returns the compiled chunk as a function; otherwise, returns nil plus the error message.
-
-If the resulting function has upvalues, the first upvalue is set to the value of env, if that parameter is given, or to the value of the global environment. Other upvalues are initialized with nil. (When you load a main chunk, the resulting function will always have exactly one upvalue, the _ENV variable (see §2.2). However, when you load a binary chunk created from a function (see string.dump), the resulting function can have an arbitrary number of upvalues.) All upvalues are fresh, that is, they are not shared with any other function.
-
-chunkname is used as the name of the chunk for error messages and debug information (see §4.9). When absent, it defaults to chunk, if chunk is a string, or to "=(load)" otherwise.
-
-The string mode controls whether the chunk can be text or binary (that is, a precompiled chunk). It may be the string "b" (only binary chunks), "t" (only text chunks), or "bt" (both binary and text). The default is "bt".
-
-Lua does not check the consistency of binary chunks. Maliciously crafted binary chunks can crash the interpreter.
-
-loadfile ([filename [, mode [, env]]])
-
-Similar to load, but gets the chunk from file filename or from the standard input, if no file name is given.
 
 pcall (f [, arg1, ···])
 
@@ -207,20 +172,6 @@ Calls function f with the given arguments in protected mode. This means that any
 xpcall (f, msgh [, arg1, ···])
 
 This function is similar to pcall, except that it sets a new message handler msgh.
-
-6.4 – String Manipulation
-
-This library provides generic functions for string manipulation, such as finding and extracting substrings, and pattern matching. When indexing a string in Lua, the first character is at position 1 (not at 0, as in C). Indices are allowed to be negative and are interpreted as indexing backwards, from the end of the string. Thus, the last character is at position -1, and so on.
-
-The string library provides all its functions inside the table string. It also sets a metatable for strings where the __index field points to the string table. Therefore, you can use the string functions in object-oriented style. For instance, string.byte(s,i) can be written as s:byte(i).
-
-The string library assumes one-byte character encodings.
-
-string.dump (function [, strip])
-
-Returns a string containing a binary representation (a binary chunk) of the given function, so that a later load on this string returns a copy of the function (but with new upvalues). If strip is a true value, the binary representation may not include all debug information about the function, to save space.
-
-Functions with upvalues have only their number of upvalues saved. When (re)loaded, those upvalues receive fresh instances containing nil. (You can use the debug library to serialize and reload the upvalues of a function in a way adequate to your needs.)
 
 6.10 – The Debug Library
 
