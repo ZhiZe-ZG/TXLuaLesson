@@ -33,3 +33,10 @@ Creates a new coroutine, with body f. f must be a function. Returns a function t
 coroutine.yield (···)
 
 Suspends the execution of the calling coroutine. Any arguments to yield are passed as extra results to resume.
+
+io.popen (prog [, mode])
+
+This function is system dependent and is not available on all platforms.
+
+Starts program prog in a separated process and returns a file handle that you can use to read data from this program (if mode is "r", the default) or to write data to this program (if mode is "w").
+When closing a file handle created with io.popen, file:close returns the same values returned by os.execute.
