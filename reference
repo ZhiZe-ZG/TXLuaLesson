@@ -142,32 +142,7 @@ Language constructs will be explained using the usual extended BNF notation, in 
 
 3.1 – Lexical Conventions
 
-Lua is a free-form language. It ignores spaces (including new lines) and comments between lexical elements (tokens), except as delimiters between names and keywords.
-
-Names (also called identifiers) in Lua can be any string of letters, digits, and underscores, not beginning with a digit and not being a reserved word. Identifiers are used to name variables, table fields, and labels.
-
-The following strings denote other tokens:
-
-     +     -     *     /     %     ^     #
-     &     ~     |     <<    >>    //
-     ==    ~=    <=    >=    <     >     =
-     (     )     {     }     [     ]     ::
-     ;     :     ,     .     ..    ...
-
-The UTF-8 encoding of a Unicode character can be inserted in a literal string with the escape sequence \u{XXX} (note the mandatory enclosing brackets), where XXX is a sequence of one or more hexadecimal digits representing the character code point.
-
 A comment starts with a double hyphen (--) anywhere outside a string. If the text immediately after -- is not an opening long bracket, the comment is a short comment, which runs until the end of the line. Otherwise, it is a long comment, which runs until the corresponding closing long bracket. Long comments are frequently used to disable code temporarily.
-
-3.3.2 – Chunks
-
-The unit of compilation of Lua is called a chunk. Syntactically, a chunk is simply a block:
-
-	chunk ::= block
-Lua handles a chunk as the body of an anonymous function with a variable number of arguments (see §3.4.11). As such, chunks can define local variables, receive arguments, and return values. Moreover, such anonymous function is compiled as in the scope of an external local variable called _ENV (see §2.2). The resulting function always has _ENV as its only upvalue, even if it does not use that variable.
-
-A chunk can be stored in a file or in a string inside the host program. To execute a chunk, Lua first loads it, precompiling the chunk's code into instructions for a virtual machine, and then Lua executes the compiled code with an interpreter for the virtual machine.
-
-Chunks can also be precompiled into binary form; see program luac and function string.dump for details. Programs in source and compiled forms are interchangeable; Lua automatically detects the file type and acts accordingly (see load).
 
 3.4.3 – Coercions and Conversions
 
