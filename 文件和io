@@ -135,3 +135,25 @@ Deletes the file (or empty directory, on POSIX systems) with the given name. If 
 os.rename (oldname, newname)
 
 Renames the file or directory named oldname to newname. If this function fails, it returns nil, plus a string describing the error and the error code. Otherwise, it returns true.
+
+剩下的在文件系统或者动态脚本中介绍.
+
+6.9 – Operating System Facilities
+
+This library is implemented through table os.
+
+os.execute ([command])
+
+This function is equivalent to the ISO C function system. It passes command to be executed by an operating system shell. Its first result is true if the command terminated successfully, or nil otherwise. After this first result the function returns a string plus a number, as follows:
+
+"exit": the command terminated normally; the following number is the exit status of the command.
+"signal": the command was terminated by a signal; the following number is the signal that terminated the command.
+When called without a command, os.execute returns a boolean that is true if a shell is available.
+
+os.tmpname ()
+
+Returns a string with a file name that can be used for a temporary file. The file must be explicitly opened before its use and explicitly removed when no longer needed.
+
+On POSIX systems, this function also creates a file with that name, to avoid security risks. (Someone else might create the file with wrong permissions in the time between getting the name and creating the file.) You still have to open the file to use it and to remove it (even if you do not use it).
+
+When possible, you may prefer to use io.tmpfile, which automatically removes the file when the program ends.
