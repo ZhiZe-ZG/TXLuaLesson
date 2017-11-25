@@ -1,12 +1,23 @@
-6.8 – Input and Output Facilities
+io.input ([file])
 
-The I/O library provides two different styles for file manipulation. The first one uses implicit file handles; that is, there are operations to set a default input file and a default output file, and all input/output operations are over these default files. The second style uses explicit file handles.
+When called with a file name, it opens the named file (in text mode), 
+and sets its handle as the default input file. When called with a file handle, 
+it simply sets this file handle as the default input file. When called without parameters, 
+it returns the current default input file.
 
-When using implicit file handles, all operations are supplied by table io. When using explicit file handles, the operation io.open returns a file handle and then all operations are supplied as methods of the file handle.
+In case of errors this function raises the error, instead of returning an error code.
 
-The table io also provides three predefined file handles with their usual meanings from C: io.stdin, io.stdout, and io.stderr. The I/O library never closes these files.
+io.read (···)
 
-Unless otherwise stated, all I/O functions return nil on failure (plus an error message as a second result and a system-dependent error code as a third result) and some value different from nil on success. On non-POSIX systems, the computation of the error message and error code in case of errors may be not thread safe, because they rely on the global C variable errno.
+Equivalent to io.input():read(···).
+
+io.output ([file])
+
+Similar to io.input, but operates over the default output file.
+
+io.write (···)
+
+Equivalent to io.output():write(···).
 
 io.close ([file])
 
@@ -15,20 +26,7 @@ Equivalent to file:close(). Without a file, closes the default output file.
 io.flush ()
 
 Equivalent to io.output():flush().
-
-io.input ([file])
-
-When called with a file name, it opens the named file (in text mode), and sets its handle as the default input file. When called with a file handle, it simply sets this file handle as the default input file. When called without parameters, it returns the current default input file.
-
-In case of errors this function raises the error, instead of returning an error code.
-
-io.lines ([filename, ···])
-
-Opens the given file name in read mode and returns an iterator function that works like file:lines(···) over the opened file. When the iterator function detects the end of file, it returns no values (to finish the loop) and automatically closes the file.
-
-The call io.lines() (with no file name) is equivalent to io.input():lines("*l"); that is, it iterates over the lines of the default input file. In this case it does not close the file when the loop ends.
-
-In case of errors this function raises the error, instead of returning an error code.
+Saves any written data to file.
 
 io.open (filename [, mode])
 
@@ -44,9 +42,32 @@ The mode string can be any of the following:
 "a+": append update mode, previous data is preserved, writing is only allowed at the end of file.
 The mode string can also have a 'b' at the end, which is needed in some systems to open the file in binary mode.
 
-io.output ([file])
+The table io also provides three predefined file handles with their usual meanings from C: io.stdin, io.stdout, and io.stderr. The I/O library never closes these files.
 
-Similar to io.input, but operates over the default output file.
+
+6.8 – Input and Output Facilities
+
+The I/O library provides two different styles for file manipulation. 
+The first one uses implicit file handles; 
+that is, there are operations to set a default input file and a default output file, 
+and all input/output operations are over these default files. The second style uses explicit file handles.
+
+When using implicit file handles, 
+all operations are supplied by table io. 
+When using explicit file handles, the operation io.open returns a file handle and then all operations are supplied as methods of the file handle.
+
+Unless otherwise stated, all I/O functions return nil on failure (plus an error message as a second result and a system-dependent error code as a third result) and some value different from nil on success. On non-POSIX systems, the computation of the error message and error code in case of errors may be not thread safe, because they rely on the global C variable errno.
+
+
+io.lines ([filename, ···])
+
+Opens the given file name in read mode and returns an iterator function that works like file:lines(···) over the opened file. When the iterator function detects the end of file, it returns no values (to finish the loop) and automatically closes the file.
+
+The call io.lines() (with no file name) is equivalent to io.input():lines("*l"); that is, it iterates over the lines of the default input file. In this case it does not close the file when the loop ends.
+
+In case of errors this function raises the error, instead of returning an error code.
+
+
 
 io.popen (prog [, mode])
 
@@ -54,9 +75,7 @@ This function is system dependent and is not available on all platforms.
 
 Starts program prog in a separated process and returns a file handle that you can use to read data from this program (if mode is "r", the default) or to write data to this program (if mode is "w").
 
-io.read (···)
 
-Equivalent to io.input():read(···).
 
 io.tmpfile ()
 
@@ -66,9 +85,7 @@ io.type (obj)
 
 Checks whether obj is a valid file handle. Returns the string "file" if obj is an open file handle, "closed file" if obj is a closed file handle, or nil if obj is not a file handle.
 
-io.write (···)
 
-Equivalent to io.output():write(···).
 
 file:close ()
 
