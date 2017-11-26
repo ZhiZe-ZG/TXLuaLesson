@@ -1,15 +1,25 @@
 2.4 – Metatables and Metamethods
 
-Every value in Lua can have a metatable. This metatable is an ordinary Lua table that defines the behavior of the original value under certain special operations. You can change several aspects of the behavior of operations over a value by setting specific fields in its metatable. For instance, when a non-numeric value is the operand of an addition, Lua checks for a function in the field "__add" of the value's metatable. If it finds one, Lua calls this function to perform the addition.
+Every value in Lua can have a metatable. 
+This metatable is an ordinary Lua table that defines the behavior of the original value under certain special operations. 
+You can change several aspects of the behavior of operations over a value by setting specific fields in its metatable. 
+For instance, when a non-numeric value is the operand of an addition, Lua checks for a function in the field "__add" of the value's metatable. 
+If it finds one, Lua calls this function to perform the addition.
 
-The key for each event in a metatable is a string with the event name prefixed by two underscores; the corresponding values are called metamethods. In the previous example, the key is "__add" and the metamethod is the function that performs the addition.
+The key for each event in a metatable is a string with the event name prefixed by two underscores; 
+the corresponding values are called metamethods. In the previous example, the key is "__add" and the metamethod is the function that performs the addition.
 
-You can query the metatable of any value using the getmetatable function. Lua queries metamethods in metatables using a raw access (see rawget). So, to retrieve the metamethod for event ev in object o, Lua does the equivalent to the following code:
+You can query the metatable of any value using the getmetatable function. 
+Lua queries metamethods in metatables using a raw access (see rawget). 
+So, to retrieve the metamethod for event ev in object o, Lua does the equivalent to the following code:
 
      rawget(getmetatable(o) or {}, "__ev")
-You can replace the metatable of tables using the setmetatable function. You cannot change the metatable of other types from Lua code (except by using the debug library (§6.10)); you should use the C API for that.
+You can replace the metatable of tables using the setmetatable function. 
+You cannot change the metatable of other types from Lua code (except by using the debug library (§6.10)); you should use the C API for that.
 
-Tables and full userdata have individual metatables (although multiple tables and userdata can share their metatables). Values of all other types share one single metatable per type; that is, there is one single metatable for all numbers, one for all strings, etc. By default, a value has no metatable, but the string library sets a metatable for the string type (see §6.4).
+Tables and full userdata have individual metatables (although multiple tables and userdata can share their metatables). 
+Values of all other types share one single metatable per type; that is, there is one single metatable for all numbers, one for all strings, etc. 
+By default, a value has no metatable, but the string library sets a metatable for the string type (see §6.4).
 
 A metatable controls how an object behaves in arithmetic operations, bitwise operations, order comparisons, concatenation, length operation, calls, and indexing. A metatable also can define a function to be called when a userdata or a table is garbage collected (§2.5).
 
