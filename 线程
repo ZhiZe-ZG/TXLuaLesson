@@ -2,10 +2,6 @@
 
 This library comprises the operations to manipulate coroutines, which come inside the table coroutine. See §2.6 for a general description of coroutines.
 
-coroutine.create (f)
-
-Creates a new coroutine, with body f. f must be a function. Returns this new coroutine, an object with type "thread".
-
 coroutine.isyieldable ()
 
 Returns true when the running coroutine can yield.
