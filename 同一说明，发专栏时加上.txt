@@ -53,7 +53,8 @@ StageA元表
 0X44垃圾回收
 
 StageB异常处理
-*0X45
+0X45错误处理
+*0X46异常处理
 
 StageC线程
 
@@ -69,13 +70,7 @@ StageC线程
 线程
 异常处理pcall,xpcall
 
-技巧
-不需要的变量可以用_占位接受
-
-例如
-position,_=string.find('abbbbbcen','b*')
-
-debug(和C语言接口放到一起介绍)
+剩余的debug(和C语言接口放到一起介绍)
 
 
 
