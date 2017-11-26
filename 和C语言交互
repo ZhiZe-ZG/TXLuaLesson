@@ -40,3 +40,7 @@ First require queries package.preload[modname]. If it has a value, this value (w
 Once a loader is found, require calls the loader with two arguments: modname and an extra value dependent on how it got the loader. (If the loader came from a file, this extra value is the file name.) If the loader returns any non-nil value, require assigns the returned value to package.loaded[modname]. If the loader does not return a non-nil value and has not assigned any value to package.loaded[modname], then require assigns true to this entry. In any case, require returns the final value of package.loaded[modname].
 
 If there is any error loading or running the module, or if it cannot find any loader for the module, then require raises an error.
+
+内存管理
+
+You can change these numbers by calling lua_gc in C or collectgarbage in Lua. You can also use these functions to control the collector directly (e.g., stop and restart it).
