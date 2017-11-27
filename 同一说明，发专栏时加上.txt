@@ -2,6 +2,8 @@
 
 本教程已托管到Github：https://github.com/TaiXuan91/TXLuaLesson
 
+说明一下这个库很小,所以就把全部视频压制后上传github了.
+
 # 0Xeee
 ## 前置知识
 ## 正文
