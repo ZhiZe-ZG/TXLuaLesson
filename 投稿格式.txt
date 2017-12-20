@@ -1,5 +1,0 @@
-太玄的Lua编程语言课演示：
-
-本视频是配合专栏作品的操作演示。请关注我的系列专栏文章《太玄的Lua编程语言课》。
-系列专栏文章也托管在Github：https://github.com/TaiXuan91/TXLuaLesson
-由于视频文件不大,现在也同步到了github库中.
