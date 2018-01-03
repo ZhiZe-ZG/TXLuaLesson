@@ -10,3 +10,7 @@
 
 *.jpg
 *.png
+
+# images sources
+
+*.odg
