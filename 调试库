@@ -5,15 +5,10 @@ This library provides the functionality of the debug interface (§4.9) to Lua pr
 
 All functions in this library are provided inside the debug table. All functions that operate over a thread have an optional first argument which is the thread to operate over. The default is always the current thread.
 
-debug.debug ()
-
-Enters an interactive mode with the user, running each string that the user enters. Using simple commands and other debug facilities, the user can inspect global and local variables, change their values, evaluate expressions, and so on. A line containing only the word cont finishes this function, so that the caller continues its execution.
-
-Note that commands for debug.debug are not lexically nested within any function and so have no direct access to local variables.
-
 debug.gethook ([thread])
 
-Returns the current hook settings of the thread, as three values: the current hook function, the current hook mask, and the current hook count (as set by the debug.sethook function).
+Returns the current hook settings of the thread, as three values: the current hook function, 
+the current hook mask, and the current hook count (as set by the debug.sethook function).
 
 debug.getinfo ([thread,] f [, what])
 
@@ -32,10 +27,6 @@ The first parameter or local variable has index 1, and so on, following the orde
 Variable names starting with '(' (open parenthesis) represent variables with no known names (internal variables such as loop control variables, and variables from chunks saved without debug information).
 
 The parameter f may also be a function. In that case, getlocal returns only the name of function parameters.
-
-debug.getmetatable (value)
-
-Returns the metatable of the given value or nil if it does not have a metatable.
 
 debug.getregistry ()
 
@@ -70,9 +61,6 @@ This function assigns the value value to the local variable with index local of 
 
 See debug.getlocal for more information about variable indices and names.
 
-debug.setmetatable (value, table)
-
-Sets the metatable for the given value to the given table (which can be nil). Returns value.
 
 debug.setupvalue (f, up, value)
 
@@ -86,7 +74,11 @@ Returns udata.
 
 debug.traceback ([thread,] [message [, level]])
 
-If message is present but is neither a string nor nil, this function returns message without further processing. Otherwise, it returns a string with a traceback of the call stack. The optional message string is appended at the beginning of the traceback. An optional level number tells at which level to start the traceback (default is 1, the function calling traceback).
+If message is present but is neither a string nor nil,
+ this function returns message without further processing. 
+ Otherwise, it returns a string with a traceback of the call stack. 
+ The optional message string is appended at the beginning of the traceback. 
+ An optional level number tells at which level to start the traceback (default is 1, the function calling traceback).
 
 debug.upvalueid (f, n)
 
