@@ -1,4 +1,4 @@
-# 0X02Hello Lua!
+# 0X02Hello Lua
 
 ## 前置知识
 
