@@ -69,3 +69,7 @@ debug.sethook(nil,'l')
 ## 获取注册事件
 
 如果想要查看当前设置的hooks可以调用函数debug.gethook.
+
+## 后续推荐
+
+暂无
