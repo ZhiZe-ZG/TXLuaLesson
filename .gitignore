@@ -1,1 +1,12 @@
 .vscode
+
+# videos
+
+*.mp4
+*.flv
+
+# some images
+# except svg
+
+*.jpg
+*.png
