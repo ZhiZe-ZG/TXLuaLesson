@@ -5,31 +5,9 @@ This library provides the functionality of the debug interface (§4.9) to Lua pr
 
 All functions in this library are provided inside the debug table. All functions that operate over a thread have an optional first argument which is the thread to operate over. The default is always the current thread.
 
-debug.gethook ([thread])
-
-Returns the current hook settings of the thread, as three values: the current hook function, 
-the current hook mask, and the current hook count (as set by the debug.sethook function).
-
-debug.getregistry ()
-
-Returns the registry table (see §4.5).
-
 debug.getuservalue (u)
 
 Returns the Lua value associated to u. If u is not a full userdata, returns nil.
-
-debug.sethook ([thread,] hook, mask [, count])
-
-Sets the given function as a hook. The string mask and the number count describe when the hook will be called. The string mask may have any combination of the following characters, with the given meaning:
-
-'c': the hook is called every time Lua calls a function;
-'r': the hook is called every time Lua returns from a function;
-'l': the hook is called every time Lua enters a new line of code.
-Moreover, with a count different from zero, the hook is called also after every count instructions.
-
-When called without arguments, debug.sethook turns off the hook.
-
-When the hook is called, its first parameter is a string describing the event that has triggered its call: "call" (or "tail call"), "return", "line", and "count". For line events, the hook also gets the new line number as its second parameter. Inside a hook, you can call getinfo with level 2 to get more information about the running function (level 0 is the getinfo function, and level 1 is the hook function).
 
 debug.setuservalue (udata, value)
 
@@ -37,20 +15,3 @@ Sets the given value as the Lua value associated to the given udata. udata must 
 
 Returns udata.
 
-debug.traceback ([thread,] [message [, level]])
-
-If message is present but is neither a string nor nil,
- this function returns message without further processing. 
- Otherwise, it returns a string with a traceback of the call stack. 
- The optional message string is appended at the beginning of the traceback. 
- An optional level number tells at which level to start the traceback (default is 1, the function calling traceback).
-
-debug.upvalueid (f, n)
-
-Returns a unique identifier (as a light userdata) for the upvalue numbered n from the given function.
-
-These unique identifiers allow a program to check whether different closures share upvalues. Lua closures that share an upvalue (that is, that access a same external local variable) will return identical ids for those upvalue indices.
-
-debug.upvaluejoin (f1, n1, f2, n2)
-
-Make the n1-th upvalue of the Lua closure f1 refer to the n2-th upvalue of the Lua closure f2.
