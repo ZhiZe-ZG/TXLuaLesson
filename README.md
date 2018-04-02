@@ -2,7 +2,15 @@
 
 TaiXuan's Programming Language Lua Lesson
 
+## 中文名
+
+太玄的Lua编程语言课。
+
 ## Update Record
+
+### 2018.4.2
+
+* 完成了最后的Lua C API章节。本教程至此告一段落。
 
 ### 2018.3.7
 
