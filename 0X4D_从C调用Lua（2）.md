@@ -1,6 +1,6 @@
 # 0X4D 从C调用Lua（2）
 
-这一期我们更近一步，讨论在C中加载Lua脚本的问题。同时讨论一下C和Lua交换数据的问题。
+这一期我们更进一步，讨论在C中加载Lua脚本的问题。同时讨论一下C和Lua交换数据的问题。
 
 ## 写一个Lua脚本
 
@@ -42,9 +42,9 @@ int main(void)
 
     // add elements to the table
     for (i = 1; i <= 5; i++) {
-        lua_pushnumber(L, i);   /* Push the table index */
-        lua_pushnumber(L, i*2); /* Push the cell value */
-        lua_rawset(L, -3);      /* Stores the pair in the table */
+        lua_pushnumber(L, i);   // Push the table index
+        lua_pushnumber(L, i*2); // Push the cell value
+        lua_rawset(L, -3);      // Stores the pair in the table
     }
 
     lua_setglobal(L, "foo"); // lua get the table
