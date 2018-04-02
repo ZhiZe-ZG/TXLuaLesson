@@ -91,3 +91,7 @@ print(my.add(4,2))
 除了官方的书籍和文档，我还参考了这篇文章。
 
 <http://www.cnblogs.com/wolfred7464/p/5147675.html>
+
+## 演示
+
+Lua和C交互的这几个演示参看videos/Lua和C交互.mp4。
