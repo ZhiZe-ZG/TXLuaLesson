@@ -1,0 +1,92 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X2E更多对表操作</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X2D对表操作</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>table.concat用于,将表的内容转化为字符串.
+<ul>
+<li>最简单的调用形式是table.concat(list).list是个顺序列表.</li>
+<li>字符串参数sep作为分隔符.例如希望表的元素与元素在输出的字符串之间用逗号隔开就用:
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">table</span>.<span class="hljs-built_in">concat</span>(list,<span class="hljs-string">','</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>这个函数还可以追加两个整数参数,用于指定列表中的一个闭区间,把这个闭区间中的内容转化为字符串.例如:
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">table</span>.<span class="hljs-built_in">concat</span>(list,<span class="hljs-string">','</span>,<span class="hljs-number">1</span>,#list)
+</code></pre>
+</blockquote>
+</li>
+<li>如果没有指定闭区间,则默认把整个顺序列表转化为字符串返回.</li>
+</ul>
+</li>
+<li>table.move (a1, f, e, t ,a2)用于复制列表.
+<ul>
+<li>参数a1,a2是两个顺序列表</li>
+<li>参数a2如果不给出,则默认为a1.</li>
+<li>参数f,e,t是整数.</li>
+<li>这个函数用于把a1中索引在f到e之间(包含f和e)的所有成员复制到a2中.</li>
+<li>复制到a2中的成员以t为起始位置.</li>
+<li>这个函数会返回a2.但即使不保存返回值,a2中的元素也经过了改动.</li>
+</ul>
+</li>
+<li>table.sort可以把顺序列表中的元素排序.这个函数会直接修改作为参数列表中的表,而其返回值一般没什么用.
+<ul>
+<li>table.sort(list)会把表中的元素从从小到大排列(改变值和索引之间的对应).</li>
+<li>这个函数排序的结果是这样得出的:把表中元素两两比较,如果a小于b<code>(a&lt;b)</code>为真则a排在前边,否则b在前.</li>
+<li>字符串等值也是可以进行比较的.例如
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-string">'abc'</span>&lt;<span class="hljs-string">'b'</span>
+</code></pre>
+</blockquote>
+</li>
+<li>字符串比较的结果是按顺序逐个比较字符串中字符的ASCII码值大小得出的.如果一个字符串与另一个字符串的开头部分完全相同.则长的字符串比较大.</li>
+<li>实际上,Lua中的比较运算符也可以作用于数字以外的各种值.只要在元表中定义了其行为.这部分内容留到后续介绍.</li>
+<li>如果你已经了解过Lua中可以把函数作为参数传递.那么你还需要table.sort的另一个参数的作用.先给出例程:
+<blockquote>
+<pre><code class="language-lua1">function co(x,y) return x&gt;=y end
+table.sort(list,co)
+</code></pre>
+</blockquote>
+</li>
+<li>传入table.sort的参数co应该是一个接受两个参数,返回一个逻辑值的函数.当它被传入时,将不再按照小于运算的判断结果排序.而是把列表中的元素两两传入函数co.视其返回值排序.如果co(a,b)返回值为true,则a在前,否则b在前.</li>
+<li>另外,co函数所定义的必须是严格的偏序关系.不具有对称性,但是具有传递性.</li>
+<li>如果列表中还有在定义的关系中相等的元素.那么它们之间的先后关系是不确定的.</li>
+</ul>
+</li>
+<li>最后有一个类似操作表但实际上是操作函数列表的select.
+<ul>
+<li>这个函数是基本函数.不需要table前缀.</li>
+<li>这个函数接受至少一个参数.第一个参数index是一个整数.</li>
+<li>在第一个参数之后的若干个参数(注意不是表)被当成一个序列处理.</li>
+<li>如果index是一个正整数则返回序列中的前index项.</li>
+<li>如果index是一个负整数则返回序列中的后index的绝对值项.</li>
+<li>select函数嵌套使用可以完成截取一个序列中的中间几项之类的复杂操作.</li>
+<li>如果想把一个表拆开为若干项作为select的输入,需要借助table.unpack函数.</li>
+<li>如果想把select的返回值打包成一个列表需要使用table.pack函数或者用花括号把select函数的调用表达式括起来.例如:
+<blockquote>
+<pre><code class="language-lua">a={<span class="hljs-built_in">select</span>(<span class="hljs-number">2</span>,<span class="hljs-string">'aaa'</span>,<span class="hljs-string">'bbb'</span>,<span class="hljs-string">'ccc'</span>,<span class="hljs-string">'ddd'</span>)}
+</code></pre>
+</blockquote>
+</li>
+<li>select函数的第一个参数不可以是0但是可以是字符串'#'.如果是井号,则这个函数会返回除了第一个参数外的参数列表中的元素个数.</li>
+</ul>
+</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X2F函数和表</li>
+</ul>
+
+</body></html>

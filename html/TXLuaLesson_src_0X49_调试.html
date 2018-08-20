@@ -1,0 +1,85 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X49 调试</h1>
+<h2>前置</h2>
+<p>之前所有模块的主干内容.</p>
+<h2>简介</h2>
+<p>调试功能需要使用debug模块.它仅仅提供了一些基本功能,而没有实现常见的完整调试器.</p>
+<p>另外官方不建议滥用这个库,详见<a href="http://www.lua.org/pil/23.html">官方书籍</a>.</p>
+<h2>交互式调试</h2>
+<p>调用debug.debug函数可以启动一个交互式的调试环境.这个交互式环境类似于Lua的默认的交互式编程环境,可以查看,修改一些变量并且计算一些表达式.但是它主要用于在程序出现异常的时候启动,用于查看变量以分析异常出现的原因.</p>
+<p>要退出交互式调试环境,输入:</p>
+<pre><code class="language-lua">cont
+</code></pre>
+<h2>修改元表</h2>
+<p>debug库中也有setmetatable和getmetatable函数.和不加debug前缀的这两个函数并不是同一个函数.但是不知道为什么要单独设置这一组函数.</p>
+<h2>栈等级</h2>
+<p>所谓的栈是一种数据结构,用于在管理函数调用时候的内存.这里我不打算详细介绍栈,仅仅描述一下栈等级的概念.</p>
+<p>这个概念和函数调用有关.如果一个函数内部调用了另一个函数.假设内部函数的等级为n,则调用它的函数的等级是n+1.可以认为这个'函数等级'就是这一层函数对应的栈等级.</p>
+<p>debug.getinfo函数调用的时候可以传入一个整数作为参数.这个整数就表示调用等级.然后就会返回一个包含对应栈等级(对应函数)的信息的表.0表示debug.getinfo这个函数本身,1表示调用debug.getinfo的函数等级.</p>
+<p>getinfo还有其他用法,详见官方手册.</p>
+<h2>获取局部变量</h2>
+<p>debug.getlocal用于获取局部变量.它接收两个参数,第一个是栈等级,第二个是局部变量的编号(用整数表示,-1表示最后一个局部变量).</p>
+<p>例如:</p>
+<pre><code class="language-lua"><span class="hljs-keyword">do</span>
+<span class="hljs-keyword">local</span> a,b,c,d=<span class="hljs-number">22</span>,<span class="hljs-number">33</span>,<span class="hljs-number">44</span>,<span class="hljs-number">55</span>
+<span class="hljs-built_in">debug</span>.<span class="hljs-built_in">getlocal</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>)
+<span class="hljs-built_in">debug</span>.<span class="hljs-built_in">getlocal</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)
+<span class="hljs-built_in">debug</span>.<span class="hljs-built_in">getlocal</span>(<span class="hljs-number">1</span>,<span class="hljs-number">-1</span>)
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>与getlocal对应的还有一个setlocal函数,用于设置局部变量值.</p>
+<h2>获取函数上值</h2>
+<p>所谓的上值就是函数外部的函数可以访问的变量.例如闭包中被外层函数闭包起来的变量.debug.getupvalue可以用于获取函数上值.与getlocal不同的是,getupvalue的第一个参数是一个函数而不是一个整数.</p>
+<p>例如:</p>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">creator</span> <span class="hljs-params">()</span></span>
+    <span class="hljs-keyword">local</span> x =<span class="hljs-number">0</span>
+    <span class="hljs-keyword">local</span> f = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span></span>
+        <span class="hljs-built_in">print</span>(x)
+        x=x+<span class="hljs-number">1</span>
+    <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">return</span> f
+<span class="hljs-keyword">end</span>
+
+a=creator()
+
+<span class="hljs-built_in">debug</span>.<span class="hljs-built_in">getupvalue</span>(a,<span class="hljs-number">1</span>)
+<span class="hljs-built_in">debug</span>.<span class="hljs-built_in">getupvalue</span>(a,<span class="hljs-number">2</span>)
+a()
+a()
+<span class="hljs-built_in">debug</span>.<span class="hljs-built_in">getupvalue</span>(a,<span class="hljs-number">2</span>)
+</code></pre>
+<p>还可以用upvalueid来检查不同函数的上值是不是共享同一个内存空间.这个函数会返回一个userdata类型的数据.例如:</p>
+<pre><code class="language-lua"><span class="hljs-built_in">print</span>(<span class="hljs-built_in">debug</span>.upvalueid(a,<span class="hljs-number">2</span>))
+b=a
+<span class="hljs-built_in">print</span>(<span class="hljs-built_in">debug</span>.upvalueid(b,<span class="hljs-number">2</span>))
+d=creator()
+<span class="hljs-built_in">print</span>(<span class="hljs-built_in">debug</span>.upvalueid(d,<span class="hljs-number">2</span>))
+</code></pre>
+<h2>改变上值</h2>
+<p>与debug.getupvalue对应的还有一个debug.setupvalue,用于改变上值.</p>
+<p>也可以用debug.upvaluejoin函数.它可以改变闭包变量之间的关系.把一个闭包函数中的闭包变量给另一个闭包函数.</p>
+<h2>查看注册表值</h2>
+<p>使用这条命令可以查看注册表值:</p>
+<pre><code class="language-lua"><span class="hljs-built_in">debug</span>.<span class="hljs-built_in">getregistry</span>()
+</code></pre>
+<p>所谓的注册表中包含标准io输入输出流对应的地址等信息.</p>
+<h2>其他函数简介</h2>
+<p>debug.traceback会返回一条栈追踪信息(返回的字符串格式有点像代码异常时候的提示,但是这就是它的正常返回值).例如:</p>
+<pre><code class="language-lua">s=<span class="hljs-built_in">debug</span>.<span class="hljs-built_in">traceback</span>()
+<span class="hljs-built_in">type</span>(s)
+<span class="hljs-built_in">print</span>(s)
+</code></pre>
+<p>debug.getuservalue和debug.setuservalue用于对userdata类型的处理.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X4A Hooks</li>
+</ul>
+
+</body></html>

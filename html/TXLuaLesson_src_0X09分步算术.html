@@ -1,0 +1,55 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X09分步算术</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X08变量</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>学习过变量之后让我们重新审视一下0X07中所做的练习。一次性把一个复杂的表达式写出来是很费神的，我们可以把复杂的计算过程分为若干步骤。用变量保存每一步的计算结果，然后用于下一步计算，直到得出最后的答案。</li>
+<li>题目：124×38＋65×124＋76÷110÷76×7
+解法：先把式子拆成几个小式子，然后再求最终结果。如果拆开的小式子还很复杂就可以进一步拆分。我决定按照这样的顺序计算(124×38)＋(65×124)＋(((76÷110)÷76)×7)。每一步计算的结果用变量保存，带入下一步计算。代码是：
+<blockquote>
+<pre><code class="language-lua">var1=<span class="hljs-number">124</span>*<span class="hljs-number">38</span>
+var2=<span class="hljs-number">65</span>*<span class="hljs-number">124</span>
+var3=<span class="hljs-number">76</span>/<span class="hljs-number">110</span>
+var3=var3/<span class="hljs-number">76</span>
+var3=var3*<span class="hljs-number">7</span>
+result=var1+var2+var3
+</code></pre>
+</blockquote>
+</li>
+<li>题目：已知圆的直径为8，求圆的面积。（圆周率取3.14）。
+解法：求圆形面积的公式中用到了圆的半径。所以先求出半径然后求面积。圆周率也可以先用变量保存下来。直径用d表示，圆周率用pi表示，面积用S表示，半径用r表示。
+<blockquote>
+<pre><code class="language-lua">d=<span class="hljs-number">8</span>
+<span class="hljs-built_in">pi</span>=<span class="hljs-number">3.14</span>
+r=d/<span class="hljs-number">2</span>
+S=<span class="hljs-built_in">pi</span>*r^<span class="hljs-number">2</span>
+</code></pre>
+</blockquote>
+答案是50.24。</li>
+<li>注意，如果要解方程，不能直接按数学中的写法把方程写出。简单一点的方法是先约简算式，整理为若干步求值赋值，最终得出结果。如果要完全让计算机自动求解方程，需要用到符号运算。但是这就超出了本系列的内容范围。</li>
+<li>在3的题目中，一开始需要初始化两个已知的变量，所以分别写了两个赋值语句。如果想精简一点可以用一个多重赋值语句来代替这两个语句：
+<blockquote>
+<pre><code class="language-lua">d,<span class="hljs-built_in">pi</span>=<span class="hljs-number">8</span>,<span class="hljs-number">3.14</span>
+</code></pre>
+</blockquote>
+只用一个赋值符号但是左边有若干个用逗号隔开的变量名，右边有若干个用逗号隔开的表达式（单独一个变量或值也是表达式）。左侧变量名一般与右侧表达式数量相等。对应位置的表达式会给对应位置的变量名赋值。这里右侧第一个表达式8给左侧第一个变量赋值，右侧第二个表达式3.14给左侧第二个表达式pi赋值。</li>
+<li>多重赋值也可以用于多于2个变量的赋值。</li>
+<li>如果右侧表达式数量多余左侧变量，则多余出的表达式不会给任何变量赋值。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X0B函数调用</li>
+<li>0X0F比较数值</li>
+</ul>
+
+</body></html>

@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X3E简单输入输出流</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X3C系统工具函数</li>
+</ul>
+<h2>正文</h2>
+<h3>默认文件读入</h3>
+<p>Lua虚拟机启动后有一个默认的文件输入流.一般这个流被定向到标准输入流.使用函数io.read()就能进行读取其中的文本.后边我们会进一步解释read函数,现在只需要知道这个函数等价于io.input():read就可以了.</p>
+<p>如果想要更换文件读入的路径,就可以使用io.input函数.把要打开的文件路径(绝对路径或者相对路径都可以)当作字符串参数传入,它就会尝试打开目标文件然后把它设置为默认的输入流.</p>
+<p>例如我想设置Lua虚拟机启动路径下的一个名为hello的文本为输入流,就使用:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">io</span>.<span class="hljs-built_in">input</span>(<span class="hljs-string">'hello'</span>)
+</code></pre>
+</blockquote>
+<p>注意,这个input函数是有返回值的,返回值是当前的默认输入流文件模型(或者说句柄,文件处理器).关于文件模型的内容我们后续再介绍.这里只要知道它的type是userdata.</p>
+<p>io.lines函数不带任何参数调用,会返回一个可迭代函数.所谓的可迭代函数,就是把一个线性的数据结构闭包到一个函数中.第一次调用这个函数就会返回第一个值,第二次返回第二个,依此类推.</p>
+<p>这里的可迭代函数就是把默认输入文件中的每一行作为一项.</p>
+<p>这个函数也可以接受文件模型作为参数,返回目标文件模型的内容.在后边我们会介绍通过文件模型调用lines函数的情况.</p>
+<h3>默认文件输出</h3>
+<p>类似于默认读入.也有一个文件用于默认输出.使用io.write函数就能向其中写入字符串(字符串作为write函数的参数).</p>
+<p>默认的输出文件是标准输出流.如果要更改默认输出文件,就是用io.output函数.用法类似io.input.</p>
+<p>io.write相当于io.output:write.</p>
+<h3>保存和关闭流</h3>
+<p>io.flush函数不接受参数,运行它会保存所有要写入输出默认文件的数据.(等价于io.output():flush().)</p>
+<p>io.close函数用于关闭文件读写流.可以把要关闭的文件模型当作参数传入.如果不带参数执行这个函数,他会关闭默认的输出文件数据流.</p>
+<p>演示: 读写文件 <a href="https://www.bilibili.com/video/av16932906/">https://www.bilibili.com/video/av16932906/</a></p>
+<h3>删除和重命名</h3>
+<p>删除和重命名文件的功能不属于io库,而是属于os库.</p>
+<p>os.remove函数接受一个字符串作为参数.它会找到字符串指定的文件(或者目录)然后删除文件.如果成功删除,它会返回true.</p>
+<p>os.rename函数接受两个字符串参数.第一个是文件(或者目录)的旧名字,第二个是新名字.进行改名操作.如果改名成功,则这个函数会返回true.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X3F文件模型</li>
+</ul>
+
+</body></html>

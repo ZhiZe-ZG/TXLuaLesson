@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X3A捕获和其他</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X39长度匹配</li>
+</ul>
+<h2>正文</h2>
+<h3>捕获(Captures)</h3>
+<p>在模式中可以用括号括起来一部分模式.这部分模式将被&quot;捕获&quot;.被捕获意味着在返回值的时候它们会作为额外的值返回.例如我需要获取一个被花括号括起来的子串.</p>
+<pre><code class="language-lua">str=<span class="hljs-string">'nhn{aen}tgu'</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,<span class="hljs-string">'%a*(%b{})%a*'</span>)
+</code></pre>
+<p>在处理一些包含有重复内容的模式时,可以使用捕获的扩展功能.用'%'后加一个数字n.表示重复本字符串开始以来定义的第n个捕获(n必须是1到9以内的).例如:</p>
+<pre><code class="language-lua">str=<span class="hljs-string">'cccab12ab12eee'</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,<span class="hljs-string">'(ab)(12)%1%2'</span>)
+</code></pre>
+<p>这里返回的头两个值匹配到的是'ab12ab12',然后返回'ab'和'12'.用数字引用捕获定义不会导致额外的返回值.</p>
+<p>如果捕获有嵌套,在同一个捕获内部的同级的捕获之间按出现的先后排列(只有当一个捕获及其内部嵌套的捕获全部返回了才算它完全返回了,轮到同级的下一个捕获).不同级别的捕获,外层的比其内层的捕获排在前边.例如:</p>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'abcdefghijk'</span>,<span class="hljs-string">'((ab)c(de))(fg)'</span>)
+</code></pre>
+<h3>其他的匹配函数</h3>
+<p>除了string.find,正则表达式的模式字符串还能用于其他函数.</p>
+<p>string.gmatch (s, pattern)这个函数会返回一个迭代器,其中包含了s中所有符合pattern的子串.</p>
+<p>string.match(s,pattern)会返回检测到的第一个符合pattern的s的子串,即使没有使用捕获表达式.可以接受第三个参数用于指定搜索的起点.</p>
+<p>string.gsub(s,pattern,repl)不会改变s本身.但是它的返回值是把s中所有符合pattern的地方都用替换(第二个返回值为替换的地方的个数).</p>
+<p>如果repl是字符串,则用repl替换.如果repl中含有捕获中百分号加数字的写法,这些占位符会被捕获的子串替换.如果是<code>'%0'</code>表示整个匹配到串.<code>'%%'</code>表示一个百分号.</p>
+<p>如果repl是函数,每次替换都会调用这个函数并且用函数返回值替换.在调用函数的时候,会把捕获到的字符串作为参数传递给函数.</p>
+<p>如果repl是表,则在每次替换的时候会先用第一个捕获到的字符串在表中查表,然后把返回值用于替换.(查表结果或者函数返回值为为false或者nil则不会替换,原字符串这一部分保持原样.)</p>
+<p>在任何情况下如果没有模式pattern没有指定捕获则进行普通文本替换.</p>
+<h3>变量名小技巧</h3>
+<p>介绍一个之前忘记介绍的小技巧不需要的变量可以用_占位接收.</p>
+<pre><code class="language-lua">position,_=<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'abbbbbcen'</span>,<span class="hljs-string">'b*'</span>)
+</code></pre>
+<h2>后续推荐</h2>
+<p>暂无</p>
+
+</body></html>

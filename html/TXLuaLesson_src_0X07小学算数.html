@@ -1,0 +1,46 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X07小学算数</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X06就像计算器</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>本期我在网上找了一些小学脱式计算习题。尝试用Lua来解决它们。这只是一个开始，后边我会尝试用Lua解决初中、高中、大学的数学题。然后你就会发现，我们数学学习中广泛存在的对笔算心算能力的精益求精是没什么意义的。</li>
+<li>题目：124×38＋65×124＋76÷110÷76×7<br>
+解法：直接把式子按Lua的符号输入一遍：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-number">124</span>*<span class="hljs-number">38</span>+<span class="hljs-number">65</span>*<span class="hljs-number">124</span>+<span class="hljs-number">76</span>/<span class="hljs-number">110</span>/<span class="hljs-number">76</span>*<span class="hljs-number">7</span>
+</code></pre>
+</blockquote>
+答案是12772.063636364</li>
+<li>题目：7.325-(5.325-1.7)×3.29×0.25×4
+解法：这道题涉及了小数和括号调整运算顺序的知识，对于小学生来说确实也难一些。但是我们的解法和上道题一样。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-number">7.325</span>-(<span class="hljs-number">5.325</span><span class="hljs-number">-1.7</span>)*<span class="hljs-number">3.29</span>*<span class="hljs-number">0.25</span>*<span class="hljs-number">4</span>
+</code></pre>
+</blockquote>
+答案是-4.60125。提醒一下，在输入数学式的时候一定要纯粹的英文字符（来自ASCII字符集）。网上很多数学式为了排版好看会采用很多非ASCII字符。这是不能为Lua所识别的。</li>
+<li>题目：87×470＋870×(-53)
+解法：这道题被我增加了一点难度。涉及负号的一元运算用法。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-number">87</span>*<span class="hljs-number">470</span>+<span class="hljs-number">870</span>*<span class="hljs-number">-53</span>
+</code></pre>
+</blockquote>
+答案是-5220。</li>
+<li>关于4中的题目：如果-被当作负号使用的时候会先于加减乘除处理。更多关于算符的处理顺序的问题可以查查算符优先级，算符结合性的话题。Lua官网上也有优先级表。但是我的建议是遇到处理顺序不清楚的地方用括号指明运算顺序。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X08变量</li>
+<li>0X0A按位运算</li>
+</ul>
+
+</body></html>

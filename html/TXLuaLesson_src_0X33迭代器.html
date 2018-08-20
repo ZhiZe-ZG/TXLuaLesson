@@ -1,0 +1,102 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X33迭代器</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X2C表的遍历</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>这里简单说明一下迭代器是什么.如果看不懂可以跳过.
+<ul>
+<li>在Lua中ipairs和pairs函数都会返回三个返回值.
+<blockquote>
+<pre><code class="language-lua">a,b,c=<span class="hljs-built_in">ipairs</span>(list)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">'list:'</span>,list)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">'a,b,c'</span>,a,b,c)
+</code></pre>
+</blockquote>
+</li>
+<li>第一个是一个函数,第二个是要遍历的表本身,第三个是遍历的起点.</li>
+<li>其中的遍历起点一般是0(pairs是nil).如果不是0,则在遍历时就以这个索引为起点(遍历时不访问起点本身).</li>
+<li>本质上Lua中表便利的语法应该这样写(为了明显我这里直接用list和0取代了b和c,如果a是由pairs返回的函数,则c的位置上应该是nil).
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-keyword">for</span> i,v <span class="hljs-keyword">in</span> a,list,<span class="hljs-number">0</span> <span class="hljs-keyword">do</span> <span class="hljs-built_in">print</span>(i,v) <span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+</li>
+<li>最后来说说a.这个函数接受两个参数:一个表和一个索引值.它也返回两个值,这两个值是表b中的一组键值对(索引和索引对应的值)例如:
+<blockquote>
+<pre><code class="language-lua">i,v=a(b,c)
+</code></pre>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>前边说的函数a的返回值其实是一个两次查表的过程.它接受的参数b是一张表,它内部还有一张表(通过闭包保存的,假设叫x).它返回的是:
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-keyword">return</span> x[c],b[x[c]]
+</code></pre>
+</blockquote>
+</li>
+<li>对于ipairs,x的长度等于#list.对于pairs,x的长度等于表的总元素个数.</li>
+<li>把所有的要遍历的键值对的键按照系统内默认的顺序排好.按照如下方法生成x:
+<ul>
+<li>0作为索引时对应值为原来的表的第一个索引.(pairs需要用nil,这是函数内部进行了一次判断分情况给出了返回值.nil不能直接作为表的索引.)</li>
+<li>第一个索引作为索引时对应值为原来的表的第二个索引.第二个索引对应第三个,第三个对应第四个以此类推.</li>
+<li>最后一个索引作为索引时,对应值为nil.</li>
+</ul>
+</li>
+<li>引入x之后就能实现以下三点:
+<ul>
+<li>对于pairs来说把不连续的表整合成一张表.对于ipairs来说把不连续的键值对剔除.</li>
+<li>返回值的同时能返回键(因为原来的键和值现在都成了值.)</li>
+<li>x[cc]会返回排在cc后边的那一个键.在把这个键代进去又能获得下一个.从而推动遍历.(0或者nil作为第一个cc的值.每次都更新cc=x[cc].直到x[cc]等于nil,则遍历结束.)</li>
+</ul>
+</li>
+<li>ipairs和pairs这两个函数生成器封装了上述过程.</li>
+<li>以上过程是根据ipairs和pairs的表现逆向猜测出来的.由于Lua虚拟机由C语言实现.所以一些机制的实现其实不应当用Lua的概念来解释.</li>
+<li>这里补充说明一条.pairs遍历的表的索引看似是不用排序的.但是系统内部按照一定的规则把所有的非数字索引成员也排了序.pairs在遍历非数字索引成员的时候就按照这个系统内部的顺序遍历.在Lua中提供了函数next用来查看系统内部如何给键值对排序(哪怕索引是非数字值).尝试以下代码.
+<blockquote>
+<pre><code class="language-lua">list={<span class="hljs-number">11</span>,<span class="hljs-number">22</span>,<span class="hljs-number">33</span>,qq=<span class="hljs-number">44</span>}
+<span class="hljs-built_in">next</span>(list)
+<span class="hljs-built_in">next</span>(list,<span class="hljs-number">1</span>)
+<span class="hljs-built_in">next</span>(list,<span class="hljs-number">2</span>)
+<span class="hljs-built_in">next</span>(list,<span class="hljs-number">3</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>这里注意,next函数返回的值有两个.第一个是下一个索引,第二个是下一个索引对应的值.</li>
+<li>更一般地说,for语句中,i后边只要有一个函数就可以(函数后边的项目会当作参数传递给这个函数).只不过如果函数没有闭包机制,很容易造成死循环.这里有一个简单的例程:</li>
+</ol>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">creator</span><span class="hljs-params">()</span></span>
+<span class="hljs-keyword">local</span> i=<span class="hljs-number">0</span>
+<span class="hljs-keyword">local</span> f=<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(x)</span></span>
+  <span class="hljs-built_in">print</span>(<span class="hljs-string">'para'</span>,x)
+  i=i+<span class="hljs-number">1</span>
+  <span class="hljs-keyword">if</span> i&lt;<span class="hljs-number">100</span> <span class="hljs-keyword">then</span>
+    <span class="hljs-keyword">return</span> i
+  <span class="hljs-keyword">else</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+  <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+<span class="hljs-keyword">return</span> f
+<span class="hljs-keyword">end</span>
+
+x=creator()
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> x,<span class="hljs-string">'yes'</span> <span class="hljs-keyword">do</span>
+  <span class="hljs-built_in">print</span>(i)
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>如果函数x有多个返回值,则在in之前可以用多个变量来接收.</p>
+<p>在in后边,写的是x和<code>'yes'</code>,这表示每次调用x的时候把<code>'yes'</code>当作参数传递给它.这个参数也可以没有.</p>
+<h2>后续推荐</h2>
+<p>暂无</p>
+
+</body></html>

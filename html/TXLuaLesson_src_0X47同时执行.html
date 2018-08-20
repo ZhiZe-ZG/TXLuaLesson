@@ -1,0 +1,62 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X47同时执行</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X41动态脚本</li>
+</ul>
+<h2>正文</h2>
+<h3>同时的定义</h3>
+<p>有时候我们需要两个或者更多的程序(或者代码块同时进行),以完成实时控制或者节省时间.这就需要用到线程(或者进程)控制.</p>
+<p>在进一步讨论之前要先说一下&quot;同时&quot;的定义.一般来说有两种符合直观意义上的&quot;同时&quot;的机制.</p>
+<p>一种是每时每刻两件事都在同步推进,称为parallel.</p>
+<p>另一种是两件事情快速交替,这一时刻推进这个,那一时刻推进那个,称为concurrent.</p>
+<p>如果同时推进的进程数小于等于CPU核心数,一般认为是parallel.否则一般以concurrent方式推进.</p>
+<h3>Lua的协程(coroutine)定义</h3>
+<p>Lua的脚本是从头到尾解释的.我们不可能在同一时刻定义若干个时间并让它们启动执行.但是可以先把若干份脚本写好,然后再在很短的时间间隔内启动所有脚本.</p>
+<p>我们之前已经介绍过把一个代码块或者脚本打包成一个函数.但是如果仅仅是顺序执行函数,必定是一个函数执行完然后下一个函数才开始执行.这无法达到&quot;同时&quot;的目的.为此需要使用Lua中最后一种没有介绍到的值类型--线程(thread).</p>
+<p>先把函数转换为线程.然后启动一个线程线程在执行到一定程度的时候会自动暂停,然后我们就可以推进另一个线程,另一个线程推进一点之后我们又切换回第一个线程(一般套在一个循环里自动完成线程间的切换).这样就实现了concurrent.</p>
+<p>顺便说一下,Lua的这种同时推进程序的方式称为协程,跟一般的操作系统中的'线程'还是有所区别的.区别在于协程的随机性比'线程'更小.因为协程间的切换也是用户代码调度的.但是由于Lua中用了thread和coroutine两个单词,所以后边我为了方便也把Lua中的concurrent机制叫做线程了.</p>
+<h3>线程创建</h3>
+<p>创建线程使用coroutine.create函数.它接受一个函数作为参数返回一个线程.当这个线程启动时就会执行这个函数.函数执行完毕,线程也就终止.</p>
+<h3>线程的启动</h3>
+<p>如果co是一个协程,下边的代码会启动(或者重启)它的执行.</p>
+<pre><code class="language-lua">coroutine.<span class="hljs-built_in">resume</span>(co)
+</code></pre>
+<p>这个函数还可以跟额外的参数,如果线程是第一次启动这些参数会作为给co中和函数的参数.</p>
+<p>另外还有一种创建和启动线程的方法.coroutine.wrap接受一个函数作为输入,创建一个线程,并把这个线程闭包到另一个函数中.返回这个闭包了线程的函数.每次调用这个闭包了线程的函数时就是启动线程.它所接受的参数也会传递给线程中的函数.</p>
+<h3>线程的状态</h3>
+<p>使用函数coroutine.status查看线程的执行状态.把要查看的线程作为参数,用字符串返回线程的执行状态.</p>
+<p><code>'suspended'</code>表示线程还未开始运行或者被挂起(用yield),至于什么是挂起我们后续再说.</p>
+<p><code>'running'</code>表示线程正在执行.</p>
+<p><code>'dead'</code>表示线程已经执行结束(或者遇到错误终止).已经dead的线程不能再次启动(需要新建).</p>
+<p><code>'normal'</code>表示线程被激活但是没有运行(比如在一个线程中启动了另一个线程,外层的线程就处于这种状态).例如:</p>
+<pre><code class="language-lua">f1=<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(c)</span></span> <span class="hljs-built_in">print</span>(coroutine.<span class="hljs-built_in">status</span>(c)) <span class="hljs-keyword">end</span>
+co=coroutine.<span class="hljs-built_in">create</span>(f1)
+
+<span class="hljs-built_in">print</span>(coroutine.<span class="hljs-built_in">status</span>(co)) <span class="hljs-comment">--suspended</span>
+coroutine.<span class="hljs-built_in">resume</span>(co,co) <span class="hljs-comment">--running</span>
+<span class="hljs-built_in">print</span>(coroutine.<span class="hljs-built_in">status</span>(co)) <span class="hljs-comment">--dead</span>
+
+f2=<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(self)</span></span>
+    <span class="hljs-keyword">local</span> co=coroutine.<span class="hljs-built_in">create</span>(f1)
+    coroutine.<span class="hljs-built_in">resume</span>(co,self)
+<span class="hljs-keyword">end</span>
+
+co2=coroutine.<span class="hljs-built_in">create</span>(f2)
+
+coroutine.<span class="hljs-built_in">resume</span>(co2,co2) <span class="hljs-comment">--normal</span>
+</code></pre>
+<p>说了这么多,现在我们的线程如果依次调用还是只能一个线程彻底执行结束然后去执行另一个.没有没有办法在线程之间实现切换.下一节我们将介绍线程切换.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X48线程调度</li>
+</ul>
+
+</body></html>

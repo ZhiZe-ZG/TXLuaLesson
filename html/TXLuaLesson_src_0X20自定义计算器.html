@@ -1,0 +1,74 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X20自定义计算器</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X1F读写终端</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>继续前一节内容中的问题。写一个脚本，从命令行读入圆柱体的高和半径，返回其体积。圆柱体的计算公式是圆周率乘以半径的平方再乘以高。</li>
+<li>我将大致介绍编程思路并给出源码。如果有任何细节问题不明白，请翻看之前的内容，使用搜索引擎查找。确认无法解自己短期内解决后可以在评论区留言。</li>
+<li>我这里给出的思路不一定是最优也不一定最好。如果你觉得我的代码不够好，应该尝试自己写一个更好的版本。</li>
+<li>整个程序按照要求大致可以分为获取输入值，计算体积，输出体积。
+<ul>
+<li>由于计算体积和输出体积的代码相对简单，不单独写一个函数。</li>
+<li>获取输入值和把字符串转换为数字封装为一个函数。</li>
+</ul>
+</li>
+<li>定义获取输入的数值的函数。
+<ul>
+<li>首先我们应该明白输入的数值会以字符串形式传回，我们需要进行类型转换。</li>
+<li>其次我们应当在用户输入前输出一些文字作为提示，防止输入错误的内容。</li>
+<li>最后，但是很重要的一点，如果用户输入了不能转化为数字的字符串。我们的程序不能因此崩溃。我们要设置相应的处理措施。比如，给返回值设置默认值。当输入值非法的时候，返回0。</li>
+</ul>
+</li>
+<li>获取输入的函数：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">require</span>(<span class="hljs-string">'io'</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getInput</span><span class="hljs-params">()</span></span>
+   <span class="hljs-keyword">local</span> temp,r,h
+   <span class="hljs-built_in">print</span>(<span class="hljs-string">'Please input radius:'</span>)
+   temp=<span class="hljs-built_in">tonumber</span>(<span class="hljs-built_in">io</span>.<span class="hljs-built_in">read</span>())
+   <span class="hljs-keyword">if</span> temp==<span class="hljs-literal">nil</span> <span class="hljs-keyword">then</span>
+       r=<span class="hljs-number">0</span>
+   <span class="hljs-keyword">else</span>
+       r=temp
+   <span class="hljs-keyword">end</span>
+   <span class="hljs-built_in">print</span>(<span class="hljs-string">'Please input height:'</span>)
+   temp=<span class="hljs-built_in">tonumber</span>(<span class="hljs-built_in">io</span>.<span class="hljs-built_in">read</span>())
+   <span class="hljs-keyword">if</span> temp==<span class="hljs-literal">nil</span> <span class="hljs-keyword">then</span>
+       h=<span class="hljs-number">0</span>
+   <span class="hljs-keyword">else</span>
+       h=temp
+   <span class="hljs-keyword">end</span>
+   <span class="hljs-keyword">return</span> r,h
+<span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+注意，这里的local是用于说明temp，r，h是局部变量。这会在0X1D变量作用域中做介绍。你的程序中不必要包含这一句。但是加上这句可以防止一些误修改。</li>
+<li>定义好getInput函数之后写，脚本的其余部分。由于定义好了这个函数，所以剩下的部分会相对简洁：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">require</span>(<span class="hljs-string">'math'</span>)
+r,h=getInput()
+V=<span class="hljs-built_in">math</span>.<span class="hljs-built_in">pi</span>*r^<span class="hljs-number">2</span>*h
+<span class="hljs-built_in">print</span>(<span class="hljs-string">'The volume is '</span>..V)
+</code></pre>
+</blockquote>
+</li>
+<li>现在保存脚本文件，试运行。</li>
+<li>这个程序还有很多可以优化、改进、拓展的地方。我将选择一点作为下一节的主题——输出数据的格式。这里我们会得到一个尽量精确的输出数值。但是如果我希望仅仅显示小数点后两位应该怎么做？这就是下一节的内容。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X21格式化输出</li>
+</ul>
+
+</body></html>

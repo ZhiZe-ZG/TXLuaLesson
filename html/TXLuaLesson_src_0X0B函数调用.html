@@ -1,0 +1,71 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X0B函数调用</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X09分步算术</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>虽然针对数字的运算有加减乘除和乘方。但是对于高中生来说，这个计算器还是太简化了，没有办法计算三角函数、对数等。幸好Lua还提供了所谓的标准库。其中的数学模块提供了这类功能。</li>
+<li>编程中调用函数的方法和数学上使用函数略有相近。如果你要调用的函数名为f，并且想把变量x给它作为参数。那么调用函数的表达式写出来就和数学上一致：
+<blockquote>
+<pre><code class="language-lua">f(x)
+</code></pre>
+</blockquote>
+</li>
+<li>函数运算后的结果叫做函数的返回值。我们可以把函数调用的表达式直接用在算术表达式中：
+<blockquote>
+<pre><code class="language-lua">y=<span class="hljs-number">3</span>*f(x)<span class="hljs-number">-2</span>
+</code></pre>
+</blockquote>
+</li>
+<li>如果你直接打开一个Lua虚拟机进程，然后执行上边的命令。肯定会提示错误，没有定义函数f。我们不应该使用未定义的函数，就像我们不该在变量初次被赋值（也叫初始化）之前读取这个变量的值。</li>
+<li>下边开始介绍具体能用的函数。函数名字都有点长，由模块名“math”加句点“.”然后再加一个表示函数功能的名称。具体为什么要这样，后边会介绍。这些函数是预定义函数 ，由Lua虚拟机提供，不需要我们定义或导入就可以使用。如果这些函数无法直接使用，尝试先运行一遍导入模块的命令：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">require</span>(<span class="hljs-string">'math'</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>求正弦值（弧度制）：math.sin 接收一个数字作为参数（默认单位为弧度），返回其正弦值。接收的参数可以是数字也可以是赋予数字值的变量。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">math</span>.<span class="hljs-built_in">sin</span>(<span class="hljs-number">1.57</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>视频中会演示一下如何计算一个含有三角函数的式子：调用正弦函数 <a href="https://www.bilibili.com/video/av13999251/">https://www.bilibili.com/video/av13999251/</a></li>
+<li>求对数函数：math.log 接收一个数字时计算其自然对数值：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">math</span>.<span class="hljs-built_in">log</span>(<span class="hljs-number">2.71828</span>)
+</code></pre>
+</blockquote>
+它还可以接收第二个参数。用逗号和第一个参数隔开。第二个参数表示选定的底数：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">math</span>.<span class="hljs-built_in">log</span>(<span class="hljs-number">8</span>,<span class="hljs-number">2</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>总结一下，调用函数的表达式由三部分组成：函数名，一对圆括号，括号内的参数。关于参数，目前有以下两点注意：
+<ul>
+<li>有的函数可以不填参数。但是一对圆括号必须要有。如果不加括号则不表示函数调用，而表示把函数名当变量使用。这个我后续会介绍。</li>
+<li>如果要同时传入多个参数，各个参数之间用逗号隔开。而且顺序很重要。</li>
+</ul>
+</li>
+<li>其他的数学函数我会在后续视频中介绍。这不是必看内容。</li>
+<li>这里为止，我们通过算符和数学模块函数基本可以计算各种常见算术问题。现在反过来思考一下，难道算符不也是函数么？比如我把(3+2)写作+(3,2)是不是就很像一个函数。事实上算符就是一些特殊函数的调用的简写。以后我们甚至会自定义值类型，然后自定义它们的算符运算法则。这种特性也要运算符重载。</li>
+<li>顺便提一下，调用函数时写在括号里的参数叫做实际参数，简称实参。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X0C函数定义</li>
+<li>0X0D数学库函数</li>
+<li>0X12字符串</li>
+</ul>
+
+</body></html>

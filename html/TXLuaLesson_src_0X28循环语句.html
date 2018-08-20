@@ -1,0 +1,79 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X28循环语句</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X26条件表达式</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>大多数编程语言都拥有三种流程控制结构.
+<ul>
+<li>一种是顺序结构,也就是多个语句顺序执行.一般来说这种结构不需要特别的语法.(但是Lua还是提供了do-end结构来表示.)</li>
+<li>一种是选择结构.在Lua中体现为if语句.</li>
+<li>另一种是循环结构.在Lua中就是我们接下来要介绍和while语句,repeat语句和以后要介绍的for语句.</li>
+</ul>
+</li>
+<li>一般认为,有这三种流程控制结构的语言是图灵完备的.关于这个有很多严谨的数学证明,就不在本教程中展开了.</li>
+<li>一个很直观的,循环语句的作用就是可以重复执行一段代码(代码块).假设已经有&quot;i=0&quot;.
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">print</span>(i)
+i=i+<span class="hljs-number">1</span>
+</code></pre>
+</blockquote>
+把上边的代码复制粘贴执行10次等价于下边一个循环语句的效果
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-keyword">while</span> (i&lt;<span class="hljs-number">10</span>) <span class="hljs-keyword">do</span>
+   prrint(i)
+   i=i+<span class="hljs-number">1</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+</li>
+<li>在3中的循环语句称为while语句.它由三个关键字(while,do,end),一个逻辑表达式和一个循环体组成.
+<ul>
+<li>循环体类似于选择结构中的一个分支.它在do和end之间.当满足一定条件的时候,重复执行循环体中的代码.</li>
+<li>while后,do之间的表达式的返回值决定是否继续循环.如果表达式的值为true(或者在Lua逻辑运算中等价于true),则执行一次循环体,然后再次判断是否满足循环条件.</li>
+<li>在3的例子中,前10次循环i分别是从0到9,(i&lt;10)都为true.第11次,i等于10,(i&lt;10)为false.所以循环终止,跳到与while对应的end之后继续执行.</li>
+</ul>
+</li>
+<li>while每次都是先检测条件是否成立,然后再执行循环体或者终止循环.Lua的另一种循环语句repeat则是每次先执行循环体,然后判断条件是否成立.如果成立则进入下一次循环.否则结束循环.例如(还是假设已经有&quot;i=0&quot;):
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-keyword">repeat</span> 
+   <span class="hljs-built_in">print</span>(i)
+   i=i+<span class="hljs-number">1</span>
+<span class="hljs-keyword">until</span> (i&gt;=<span class="hljs-number">10</span>) 
+</code></pre>
+</blockquote>
+</li>
+<li>在5的例子中,repeat循环语句的结果和3中的while语句一样.
+<ul>
+<li>虽然用的关键词不一样了.但是repeat语句一样有循环体和条件.</li>
+<li>repeat和until之间是要重复执行的循环体.</li>
+<li>until之后的表达式是循环终止条件.</li>
+<li>注意,repeat和while的几点不同:
+<ul>
+<li>while语句的条件表达式为true时循环才会继续.repeat的条件表达式为true时循环终止.</li>
+<li>while先判断条件才决定是执行循环体还是终止循环.repeat先执行循环体才决定是否终止循环.</li>
+<li>while语句对应中文中的&quot;当型循环&quot;,repeat语句对应中文中的&quot;直到型循环&quot;</li>
+<li>repeat循环不需要end关键字.条件表达式也可以写在until的后一行.</li>
+</ul>
+</li>
+<li>两种循环语句虽然有所不同,但是一般来说二者可以相互转换.只是有的问题用while写更简洁,有的用repeat更简洁.</li>
+</ul>
+</li>
+<li>演示: 两种循环 <a href="https://www.bilibili.com/video/av16713723/">https://www.bilibili.com/video/av16713723/</a></li>
+<li>一个循环语句可以在另一个循环语句的循环体里.这称为循环语句的嵌套.不光循环语句之间可以嵌套.循环语句,if语句,do-end语句,函数定义等Lua中的复合句都可以相互嵌套.来实现更复杂的效果.</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X29再谈循环</li>
+</ul>
+
+</body></html>

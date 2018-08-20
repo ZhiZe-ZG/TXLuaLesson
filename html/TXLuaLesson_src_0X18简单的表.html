@@ -1,0 +1,79 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X18简单的表</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X15类型转换</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>表是Lua的数据类型之一。一个表由零或若干个成员组成，这些成员的类型可以是其他的除了nil以外的类型，也可以是表。（如果一个成员是nil相当于这个成员不存在。）</li>
+<li>表的字面值可以用来表示一个表常量。一个空表的字面值就是一对空的花括号：
+<blockquote>
+<pre><code class="language-lua">L={}
+<span class="hljs-built_in">type</span>(L)
+</code></pre>
+</blockquote>
+这里变量L被赋予了一个空表值。空表就是没有任何有效成员（换句话说就是所有成员值都是nil）的表。</li>
+<li>然后演示一个拥有成员的表
+<blockquote>
+<pre><code class="language-lua">L={<span class="hljs-string">'hello'</span>,<span class="hljs-number">78</span>,<span class="hljs-string">'world'</span>,<span class="hljs-literal">true</span>}
+</code></pre>
+</blockquote>
+这个表有四个成员，成员之间用逗号隔开。如果直接print这个变量L并不能看到这四个成员，而是会看到表L的编号。</li>
+<li>如果想要访问或者修改L中某个成员，需要使用这个成员的索引。其实在创建上一条中演示的表时系统自动为每一个成员分配了一个索引。这个索引就相当于它们的身份证号。我们需要使用这个成员时，就在表L中按照要找的成员的索引进行指定。</li>
+<li>我们引入一种新的运算，名为“查表”。在表变量后使用一对方括号，括号内写上索引用于表示在表内查找索引对应的成员，以供读取或修改。（注意函数调用使用的是圆括号，查表使用的是方括号。）</li>
+<li>在第3条中演示的情况，系统自动为每个表的成员分配了索引。按照书写的先后顺序，从1开始，往后排。有四个成员，则按顺序其索引分别是1,2,3,4。
+<ul>
+<li>学过C，Java，Python等语言的请注意，Lua的默认索引不是从0开始，而是从1开始。而且涉及到列表索引区间的地方大都是闭区间。</li>
+</ul>
+</li>
+<li>使用表的成员：
+<ul>
+<li>输出L的索引为2的成员：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">print</span>(L[<span class="hljs-number">2</span>])
+</code></pre>
+</blockquote>
+</li>
+<li>将L的索引为3的成员的值进行更改：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">print</span>(L[<span class="hljs-number">3</span>])
+L[<span class="hljs-number">3</span>]=<span class="hljs-string">'good'</span>
+<span class="hljs-built_in">print</span>(L[<span class="hljs-number">3</span>])
+</code></pre>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>这里提一句，暂时理解不了没关系。表加上查表运算符（一对方括号）和索引，组合起来相当于一个变量名。</li>
+<li>就像变量一样。未定义的变量名会返回nil。没有赋值过的索引对应的成员也是nil：
+<blockquote>
+<pre><code class="language-lua">L={<span class="hljs-number">43</span>,<span class="hljs-number">37</span>,<span class="hljs-number">2</span>}
+L[<span class="hljs-number">6</span>]
+</code></pre>
+</blockquote>
+</li>
+<li>给之前没有定义过的成员赋值会创建成员：
+<blockquote>
+<pre><code class="language-lua">L={<span class="hljs-number">32</span>,<span class="hljs-number">82</span>,<span class="hljs-number">61</span>}
+L[<span class="hljs-number">7</span>]=<span class="hljs-number">56</span>
+<span class="hljs-built_in">print</span>(L[<span class="hljs-number">7</span>])
+</code></pre>
+</blockquote>
+</li>
+<li>如果把一个索引对应的成员赋值为nil，则相当于删除这个成员。</li>
+<li>另外请注意Lua中的表的索引可以不连续。可以1到4有成员，但是5号成员为空，然后6和7又有成员。然而，在一些和迭代有关的情形中，只要出现了对应成员不存在（或者说值为nil）的索引，后续的索引将不再访问。也就是说刚刚的例子中，迭代1到4号元素后，由于5号为nil，迭代终止，后续元素不再迭代。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X24词典</li>
+</ul>
+
+</body></html>

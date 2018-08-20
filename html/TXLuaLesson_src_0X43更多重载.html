@@ -1,0 +1,141 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X43更多重载</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X42重载运算</li>
+</ul>
+<h2>正文</h2>
+<h3>其他算符</h3>
+<p>重载其他的算符就像重载加法一样,只不过索引使用<code>'__add'</code>,而是使用其他的对应索引.</p>
+<p>注意,定义的函数要和要重载的运算目数相当.</p>
+<table>
+<thead>
+<tr>
+<th>索引</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>__add</td>
+<td>加法运算</td>
+</tr>
+<tr>
+<td>__sub</td>
+<td>减法运算(减号作二目运算)</td>
+</tr>
+<tr>
+<td>__mul</td>
+<td>乘法运算</td>
+</tr>
+<tr>
+<td>__div</td>
+<td>除法运算</td>
+</tr>
+<tr>
+<td>__mod</td>
+<td>取模运算</td>
+</tr>
+<tr>
+<td>__pow</td>
+<td>乘方运算</td>
+</tr>
+<tr>
+<td>__unm</td>
+<td>取反运算(减号作一目运算)</td>
+</tr>
+<tr>
+<td>__idiv</td>
+<td>整除运算</td>
+</tr>
+<tr>
+<td>__band</td>
+<td>按位与运算</td>
+</tr>
+<tr>
+<td>__bor</td>
+<td>按位或运算</td>
+</tr>
+<tr>
+<td>__bxor</td>
+<td>按位异或运算</td>
+</tr>
+<tr>
+<td>__bnot</td>
+<td>按位非运算</td>
+</tr>
+<tr>
+<td>__shl</td>
+<td>左移运算</td>
+</tr>
+<tr>
+<td>__shr</td>
+<td>右移运算</td>
+</tr>
+<tr>
+<td>__concat</td>
+<td>链接运算(两个句点)</td>
+</tr>
+<tr>
+<td>__len</td>
+<td>取长度运算</td>
+</tr>
+<tr>
+<td>__eq</td>
+<td>相等判断</td>
+</tr>
+<tr>
+<td>__lt</td>
+<td>小于判断</td>
+</tr>
+<tr>
+<td>__le</td>
+<td>小于等于判断</td>
+</tr>
+</tbody>
+</table>
+<h3>重载查表</h3>
+<p>在查表时,如果没有对应的元素但是这个表有元表.Lua就会进一步在它的元表中的<code>'__index'</code>这一项当中去查表.典型的例子是string类的值的默认元表的<code>'__index'</code>项是一个包含有之前我们介绍的用于字符串处理的函数的表.所以我们之前介绍的字符串处理函数也可以用面向对象的风格调用.实验:</p>
+<blockquote>
+<pre><code class="language-lua">l=<span class="hljs-built_in">getmetatable</span>(<span class="hljs-string">'1234'</span>)
+<span class="hljs-keyword">for</span> i,v <span class="hljs-keyword">in</span> <span class="hljs-built_in">pairs</span>(l.<span class="hljs-built_in">__index</span>) <span class="hljs-keyword">do</span> <span class="hljs-built_in">print</span>(i,v) <span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+<p>除了获取表成员可以重载,设置表的新成员这一事件也可以重载.其对应的标签是<code>'__newindex'</code>.给一个表中不存在的索引复制时,就会调用这个方法(用等式赋值的方法,创建新的表成员的时候).</p>
+<blockquote>
+<pre><code class="language-lua">f=<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(x,y,z)</span></span> <span class="hljs-built_in">print</span>(<span class="hljs-string">"can't add new index"</span>) <span class="hljs-keyword">end</span>
+t={<span class="hljs-built_in">__newindex</span>=f}
+x={}
+x[<span class="hljs-number">123</span>]=<span class="hljs-string">'eee'</span>
+<span class="hljs-built_in">print</span>(x[<span class="hljs-number">123</span>])
+</code></pre>
+</blockquote>
+<p>这里重载之后实际上每次新增成员都会输出一句话,而不会新增成员.</p>
+<p>注意,<code>'__newindex'</code>对应的方法可以接受三个参数,按顺序是:表本身,要新增的索引(键),要新增的值.</p>
+<p>另外,<code>'__index'</code>对应的也可以是一个函数,这个函数调用时将被传递给两个参数--表和索引.</p>
+<p><code>'__newindex'</code>对应的也可以是一个表,这样所有给表本身新增的成员都会新增到其元表中对应<code>'__newindex'</code>的表中.</p>
+<h3>重载调用</h3>
+<p>如果<code>'__call'</code>有一个函数调用.那么即使表也可以用于函数调用表达式.调用结果就是把表本身和调用表达式中的参数参数传递给<code>'__call'</code>对应的函数,然后获取返回值.</p>
+<p>例如:</p>
+<blockquote>
+<pre><code class="language-lua">t={<span class="hljs-built_in">__call</span>=<span class="hljs-built_in">print</span>}
+x={}
+<span class="hljs-built_in">setmetatable</span>(x,t)
+x(<span class="hljs-string">'hello'</span>)
+</code></pre>
+</blockquote>
+<h3>重载元表操作</h3>
+<p>如果一个表的元表中有<code>'__metatable'</code>键,则getmetatable会返回这项对应的值.给这样的表设置元表也会引起错误.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X44垃圾回收</li>
+</ul>
+
+</body></html>

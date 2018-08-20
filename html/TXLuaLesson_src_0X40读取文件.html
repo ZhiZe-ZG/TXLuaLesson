@@ -1,0 +1,60 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X40读取文件</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X3F文件模型</li>
+</ul>
+<h2>正文</h2>
+<h3>逐行读取</h3>
+<p>首先要读取文件,文件模型必须按照可读的模式打开.</p>
+<blockquote>
+<pre><code class="language-lua">file:<span class="hljs-built_in">read</span>()
+</code></pre>
+</blockquote>
+<p>这个函数每调用一次就会返回file中的一行.</p>
+<h3>批量读取</h3>
+<p>每个文件模型都有lines函数.例如:</p>
+<blockquote>
+<pre><code class="language-lua">f=file:<span class="hljs-built_in">lines</span>()
+</code></pre>
+</blockquote>
+<p>f是一个可迭代函数,包含file的全部内容.调用f一次会返回一行.它可以直接当作迭代器用于for循环,例如输出file中所有行:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> file:<span class="hljs-built_in">lines</span>() <span class="hljs-keyword">do</span>
+   <span class="hljs-built_in">print</span>(x)
+<span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+<h3>read函数的参数</h3>
+<p>read函数可以接受参数来确定读取的内容.</p>
+<p>'n'会让read读取一个数字,返回一个number类型的值.</p>
+<p>'a'会让read读取整个文件并返回.</p>
+<p>'l'会让read读取的时候,返回的字符串中不包括换行符.</p>
+<p>'L'会让read读取的时候,返回的字符串中包含换行符.</p>
+<h3>移动读写点</h3>
+<p>文件模型会保存当前读写的字符位置.随着read或者write的调用,这个读写点会自动移动.如果要重新读取某一段内容或者覆盖某一段已经存在的内容,就需要移动读写点.</p>
+<p>移动读写点使用函数seek(同样需要从文件模型调用,并且把文件模型本身作为第一个参数传入).</p>
+<p>它可以接受两个参数whence和offset.其中whence表示模式,offset时移动量.它以whence为参照移动offset长,并且返回当前读写点距离开头的位置(文件开始处为0).</p>
+<p>offset为0表示移动到参照处,offset为负数表示倒退.</p>
+<p>whence默认为'cur'.表示参照为当前位置为参照.</p>
+<p>还可以选'set'或者'end'.'set'表示开头,'end'表示文件结尾.</p>
+<p>offset默认值为0.所以仅仅给出'cur'表示不动,查看当前位置.'set'和'end'分别表示到文件开头,结尾.</p>
+<h3>文件模型检查</h3>
+<p>io.type函数会告诉你传入的变量是不是可用的文件模型.如果是打开的文件模型则返回字符串'file',如果是关闭的文件模型则返回'closed file'.如果不是文件模型则返回nil.</p>
+<h3>临时文件</h3>
+<p>有时候我们需要一些临时文件保存数据.在程序结束之后这些文件被系统自动回收.</p>
+<p>使用io.tmpfile函数会创建一个临时文件,并返回其模型.</p>
+<p>你也可以使用os.tmpname创建临时文件并返回其名称,然后用io.open打开,但是不推荐这么用.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X41动态脚本</li>
+</ul>
+
+</body></html>

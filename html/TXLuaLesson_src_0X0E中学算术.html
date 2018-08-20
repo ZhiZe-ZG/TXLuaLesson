@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X0E中学算术</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X0D数学库函数</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>有了三角函数、反三角函数、对数函数、求幂运算，中学阶段涉及的所有具体的数值计算基本就都可以求解。对于分段函数、狄利克雷函数这类需要逻辑判断的函数还需要学习选择结构才能处理。</li>
+<li>求此表达式的值:ln(-sin(24))/(e^arcsin(0.9))+(3^(1/2))</li>
+<li>第2点中提出的习题，只需要简单转化为Lua中的表达式即可。也可以分为多步计算，用变量保存中间值。这里直接转换：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">math</span>.<span class="hljs-built_in">log</span>(-<span class="hljs-built_in">math</span>.<span class="hljs-built_in">sin</span>(<span class="hljs-number">24</span>))/<span class="hljs-built_in">math</span>.<span class="hljs-built_in">exp</span>(<span class="hljs-built_in">math</span>.<span class="hljs-built_in">asin</span>(<span class="hljs-number">0.9</span>))+<span class="hljs-built_in">math</span>.<span class="hljs-built_in">sqrt</span>(<span class="hljs-number">3</span>)
+</code></pre>
+</blockquote>
+结果是约为1.69968。</li>
+<li>解释一下题中的函数用法。一个函数的返回值可以作为另一个函数的实参。因此可以把一个含有函数调用的表达式写在另一个函数调用的参数位置。</li>
+<li>需要注意的是，很多中学的数学题还不能直接通过算术求解。例如求函数的值域、定义域。本质上不是从数到数的计算，而是从函数到数或者从函数到区间的运算。想要靠程序完全自动解决这类问题，还需要用到更多的Lua知识。</li>
+</ol>
+<h2>后续推荐</h2>
+<p>暂无</p>
+
+</body></html>

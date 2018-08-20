@@ -1,0 +1,56 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X36度量时间</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X34获取系统时间</li>
+</ul>
+<h2>正文</h2>
+<h3>1. 度量脚本执行时间</h3>
+<p>os.clock函数在交互式编程环境中使用效果不明显,因为每一句命令都会被当成一个小脚本执行.而os.clock函数度量的是整个脚本执行的时间.</p>
+<p>在脚本中调用这个函数会返回一个数值.它表示从脚本开始执行到现在位置大概用了都少时间(单位是秒).下边是一个示例脚本,把它保存成文件,用Lua虚拟机运行:</p>
+<blockquote>
+<pre><code class="language-lua">x=<span class="hljs-number">0</span>
+<span class="hljs-keyword">for</span> i=<span class="hljs-number">1</span>,<span class="hljs-number">10</span> <span class="hljs-keyword">do</span>
+   <span class="hljs-keyword">for</span> j=<span class="hljs-number">1</span>,<span class="hljs-number">1e7</span> <span class="hljs-keyword">do</span>
+       x=x+<span class="hljs-number">1</span>
+   <span class="hljs-keyword">end</span>
+   <span class="hljs-built_in">print</span>(<span class="hljs-built_in">os</span>.<span class="hljs-built_in">clock</span>())
+<span class="hljs-keyword">end</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">'total time'</span>,<span class="hljs-built_in">os</span>.<span class="hljs-built_in">clock</span>()))
+</code></pre>
+</blockquote>
+<p>演示: 度量脚本执行时间 <a href="https://www.bilibili.com/video/av16866561/">https://www.bilibili.com/video/av16866561/</a></p>
+<h3>2. 记录时间</h3>
+<p>os.time函数返回一个数字,这个数字表示一个特定的时间点.如果不用任何参数调用它,它会返回表示当前时刻的一个数字.但是这个数字没有任何格式,难以看懂.要想看这个数字表示几月几号几点就要把它作为第二个参数传给os.date.例如:</p>
+<blockquote>
+<pre><code class="language-lua">x=<span class="hljs-built_in">os</span>.<span class="hljs-built_in">time</span>()
+<span class="hljs-built_in">os</span>.<span class="hljs-built_in">date</span>(<span class="hljs-string">'c'</span>,x)
+</code></pre>
+</blockquote>
+<p>它也可以用于把os.date返回的带有时间信息的表压缩为一个整数.例如:</p>
+<blockquote>
+<pre><code class="language-lua">x=<span class="hljs-built_in">os</span>.<span class="hljs-built_in">date</span>(<span class="hljs-string">'*t'</span>)
+y=<span class="hljs-built_in">os</span>.<span class="hljs-built_in">time</span>(x)
+<span class="hljs-built_in">os</span>.<span class="hljs-built_in">date</span>(<span class="hljs-string">'c'</span>,y)
+</code></pre>
+</blockquote>
+<h3>3. 计算时间间隔</h3>
+<p>os.time返回的表示时间的数可以传递给os.difftime.它能计算出两者的差距(单位是秒).</p>
+<blockquote>
+<pre><code class="language-lua">a=<span class="hljs-built_in">os</span>.<span class="hljs-built_in">time</span>()
+b=<span class="hljs-built_in">os</span>.<span class="hljs-built_in">time</span>()
+<span class="hljs-built_in">os</span>.<span class="hljs-built_in">difftime</span>(b,a)
+</code></pre>
+</blockquote>
+<p>注意这里是b的时间减a.(这里反过来可能得到负数.)</p>
+<h2>后续推荐</h2>
+<p>暂无</p>
+
+</body></html>

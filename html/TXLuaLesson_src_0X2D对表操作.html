@@ -1,0 +1,91 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X2D对表操作</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X2C表的遍历</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>获取表中指定索引对应的值也有函数形式.假设有<code>list={11,22,33}</code>.以下两行代码是等价的:
+<blockquote>
+<pre><code class="language-lua">list[<span class="hljs-number">2</span>]
+<span class="hljs-built_in">rawget</span>(list,<span class="hljs-number">2</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>创建表中成员(键值对)也有函数形式.接受要添加(设置)元素的表,索引,值三个参数.以下两行代码等价:
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">rawset</span>(list,<span class="hljs-number">23</span>,<span class="hljs-string">'hello'</span>)
+list[<span class="hljs-number">23</span>]=<span class="hljs-string">'hello'</span>
+</code></pre>
+</blockquote>
+另外这个函数也有返回值,其返回值是设置后的表.</li>
+<li>Lua标准库提供了一个操作表的模块.如果后续的代码不能使用,尝试先运行<code>require('table')</code>.</li>
+<li>table.insert函数能向表中插入元素.(针对顺序列表.)
+<ul>
+<li>table.insert(list,value)
+<ul>
+<li>list是一个列表.</li>
+<li>value是一个值</li>
+<li>这个函数会在列表的末尾插入值value.</li>
+</ul>
+</li>
+<li>table.insert(list,pos,value)
+<ul>
+<li>pos是一个整数.</li>
+<li>这样调用这个函数会向列表中的pos这个位置上插入值value.原来列表中索引大于等于pos的成员会向后移动.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>table.remove函数能从列表中移除元素.(针对顺序列表.)
+<ul>
+<li>table.remove(list)
+<ul>
+<li>list是一个列表</li>
+<li>这个函数移除list的最后一个成员.并且把这个成员的值作为返回值.</li>
+</ul>
+</li>
+<li>table.remove(list,pos)
+<ul>
+<li>pos是一个整数.</li>
+<li>这个函数移除list中的第pos个成员并将其值返回.</li>
+<li>移除元素后,list中索引大于等于pos的元素会迁移,补充空缺.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>table.pack接受任意个参数,把这些参数组成一张顺序列表返回.如果没有任何参数传入,则返回一张空表(所有成员的值都为nil).</li>
+<li>table.unpack接受一张表.然后返回多个返回值.需要用多个变量来接受其返回值.例如
+<blockquote>
+<pre><code class="language-lua">list={<span class="hljs-number">22</span>,<span class="hljs-number">33</span>,<span class="hljs-number">44</span>}
+a,b,c=<span class="hljs-built_in">table</span>.<span class="hljs-built_in">unpack</span>(list)
+</code></pre>
+</blockquote>
+<ul>
+<li>table.unpack还可以接受两个参数.例如<code>table.unpack(list,i,j)</code></li>
+<li>i和j指定要返回的成员的闭区间.i是起始点,j是终点.</li>
+<li>i的默认值为1.j的默认值为#list.</li>
+</ul>
+</li>
+<li>对于table.unpack这种会同时返回多种元素的函数.如果想把其函数返回值整理到一个表中赋予一个变量则可以使用花括号把函数调用表达式括起来.
+<blockquote>
+<pre><code class="language-lua">a={<span class="hljs-built_in">table</span>.<span class="hljs-built_in">unpack</span>(list)}
+</code></pre>
+</blockquote>
+</li>
+<li>这里顺便回顾一个知识点.用等号批量赋值时,如果左边的变量数超过右边的数量,则多出来的左侧变量会被赋予nil.</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X2E更多对表操作</li>
+</ul>
+
+</body></html>

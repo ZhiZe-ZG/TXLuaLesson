@@ -1,0 +1,119 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X38字符类</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X37搜寻字符串</li>
+</ul>
+<h2>正文</h2>
+<h3>匹配任意字符</h3>
+<p>考虑这个问题:要在str中匹配一个以a开头,b结尾的有三个字符的字符串.中间的字母是什么都可以(但是不能是数字或者其他非字母的符号).</p>
+<p>针对每一个可能的子串写一个判断语句显然不合适.这时就要用到正则表达式的语法.在模式p中,'%a'会被当作一个有特殊意义的组合(转义).出现它的地方可以被任何一个字符代替.</p>
+<p>尝试代码:</p>
+<blockquote>
+<pre><code class="language-lua">p=<span class="hljs-string">'a%ab'</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'aob'</span>,p)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'aeb'</span>,p)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'a%b'</span>,p)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'a%ab'</span>,p)
+</code></pre>
+</blockquote>
+<p>类似于之前介绍过的各种字符串格式约定.正则表达式的组合还有很多.我们使用的'%a'这这张表中的符号成为字符类.也就是一个占位符表示可以匹配一类字符中的任何一个(逻辑的或关系).</p>
+<table>
+<thead>
+<tr>
+<th>组合</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>.</td>
+<td>表示任何一个符号(不论数字,字母或者其他)</td>
+</tr>
+<tr>
+<td>%a</td>
+<td>表示任意字母</td>
+</tr>
+<tr>
+<td>%c</td>
+<td>表示任意ASCII中的控制字符</td>
+</tr>
+<tr>
+<td>%d</td>
+<td>表示任意数字</td>
+</tr>
+<tr>
+<td>%g</td>
+<td>表示ASCII中除了空格以外的所有可打印字符</td>
+</tr>
+<tr>
+<td>%l</td>
+<td>表示任意小写字母</td>
+</tr>
+<tr>
+<td>%p</td>
+<td>表示任意标点符号</td>
+</tr>
+<tr>
+<td>%s</td>
+<td>表示任意的空白符</td>
+</tr>
+<tr>
+<td>%u</td>
+<td>表示任意的大写字母</td>
+</tr>
+<tr>
+<td>%w</td>
+<td>表示任意字母或者数字</td>
+</tr>
+<tr>
+<td>%x</td>
+<td>表示任意十六进制数中用到的数字(除了十进制数字还包含几个字母)</td>
+</tr>
+</tbody>
+</table>
+<p>另外,在字符串<code>'^$()%.[]*+-?)'</code>中的这12个字符在正则表达式中有特殊的语法意义.如果想要匹配他们本身,必须在他们之前加上转义符'%'.</p>
+<p>也可以给string.find传递第4个参数.当这个参数为true时.模式将被当成普通字符串进行匹配,不会解析其中的正则表达式.</p>
+<blockquote>
+<pre><code class="language-lua">str=<span class="hljs-string">'aaabbba*ano'</span>
+p=<span class="hljs-string">'a*'</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,p,<span class="hljs-number">1</span>)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,p,<span class="hljs-number">1</span>,<span class="hljs-literal">true</span>)
+</code></pre>
+</blockquote>
+<h3>自定义字符类</h3>
+<p>如果觉得预定义的字符类不能满足你的需求(比如你想要匹配1到5的数字或者字母abc),可以自定义字符类.</p>
+<p>一个自定义的字符类以方括号开头结尾.方括号里的普通字符之间是或的关系.例如匹配a或b或c用:</p>
+<blockquote>
+<pre><code class="language-lua">p=<span class="hljs-string">'[abc]'</span>
+</code></pre>
+</blockquote>
+<p>注意,这一长串其实只匹配一个位置.只是这个位置上的字符可以是a也可以是b也可以是c.</p>
+<p>字符类的定义中如果要出现<code>'^$()%.[]*+-?)'</code>中的字符,也需要转义.</p>
+<p>自定义的字符类中可以直接使用预定义子字符类.这样自定义的字符类就是预定义的字符类的超集.</p>
+<p>对于数字和字母还有一个特殊写法,给出开头和结尾的字符,中间加上<code>'-'</code>则表示开头到结尾之间的所有字符.例如:</p>
+<blockquote>
+<pre><code class="language-lua">p=<span class="hljs-string">'[a-e4-7]'</span>
+</code></pre>
+</blockquote>
+<p>表示小写字母a到e或者数字4到7.</p>
+<p>如果自定义字符类要用排除模式,则在方括号内,一开始加上<code>'^'</code>.</p>
+<blockquote>
+<pre><code class="language-lua">p=<span class="hljs-string">'[^1-3]'</span>
+</code></pre>
+</blockquote>
+<p>这个字符集表示除了数字1到3以外的所有字符.</p>
+<p>对于预定义字符集,如果把表示它的字母换成大写,就表示反选字符集.例如'%a'表示所有字母,则'%A'表示所哟非字母.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X39长度匹配</li>
+</ul>
+
+</body></html>

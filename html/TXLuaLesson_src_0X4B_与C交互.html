@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X4B 与C交互</h1>
+<p>Lua可以很方便地调用专门封装过的C函数，C程序也可以轻松嵌入Lua虚拟机。这一期开始我们介绍Lua与C的交互。这主要包括从Lua调用C和从C调用Lua两个方面。</p>
+<p>由于Lua的虚拟机本身是C语言写的，在Lua与C的交互式中，我们需要在Lua中做的事情并不多，大部分工作都是用C完成的。所以在开始本章之前请确保你基本能看懂C程序，并且了解C程序的编译。</p>
+<h2>实验环境</h2>
+<p>我这里使用的是Linux系统上通过源码编译安装的Lua5.3。如果你的编译或者安装有问题可能影响到实验（比如头文件不在指定路径，或者没有编译出库文件）。</p>
+<p>所有C程序的编译器采用gcc。gcc的用法我也不在这里介绍。</p>
+<h2>接口函数</h2>
+<p>所谓的接口函数都是Lua虚拟机提供的，供C程序调用的函数。这里边没一个是Lua函数。</p>
+<p>在使用这些接口函数的时候注意以下几个头文件。</p>
+<p>lua.h声明了Lua官方文档第4章The Application Program Interface中描述的所有接口函数（其中的函数基本以“lua_”开头）。</p>
+<p>lualib.h声明了和Lua标准库有关的一些函数（其中的很多函数以“luaopen_”开头）。</p>
+<p>lauxlib.h声明了官方文档第5章The Auxiliary Library中所描述的辅助函数（其中的函数基本以“luaL_”开头）。</p>
+<p>luaconf.h声明了一些配置信息。</p>
+<h2>Lua虚拟机</h2>
+<p>将Lua虚拟机嵌入C程序并运行。对于宿主C程序来说，Lua虚拟机就是一个子进程。为了表示这个子进程及其状态我们用需要用到一个lua_State类型的指针。Lua提供了新建，开启和关闭这些虚拟机的函数。我们在新建和关闭这些虚拟机的时候就像打开或者关闭文件流。</p>
+<p>我们可以在一个C程序里同时开启多个Lua虚拟机。这样做就好像我们同时启动了多个Lua进程。</p>
+<h2>交换数据</h2>
+<p>Lua虚拟机本身是一个C语言写的程序。在运行的时候，虚拟机内部和外部的C程序发生的数据交换主要是通过一个公用栈实现的。也就是说Lua虚拟机和C程序共用一个栈，双方都可以压入或者读取数据。一方压入，一方弹出就能实现数据的交换。我们后续会在实例中介绍这个过程。</p>
+<p>为了方便，我们约定，用-1作为栈顶元素的索引，用-2作为栈顶元素下边那个元素的索引其他依此类推。我们还约定用1作为栈底元素的索引，用2作为栈底元素上边的一个元素的索引，其他依此类推。</p>
+<p>这个栈是一个虚拟栈，在进栈和出栈的时候就会处理不同语言之间数据类型转换的问题。C语言在读写这个栈的时候都是在操作C语言的类型。而Lua在读写这个栈的时候都是在操作Lua的数据类型。两个语言之间的数据类型会按照对应关系转换。</p>
+<p>注意，每一个Lua虚拟机进程（lua_State）都有一个这样的虚拟栈让C API中的C函数与之交换数据。我们在调用C API的时候也要通过传入lua_State参数的方式说明让C API读写哪个Lua虚拟机中的数据。</p>
+<p>而在Lua中调用封装好的C函数的时候（不是C API中的函数），会给每个被调用的C函数分配一个独立的虚拟栈。这个虚拟栈不同于刚刚说的C API用的那个。当函数调用结束之后，这个专门分配的虚拟栈也就完成了使命。</p>
+<p>在使用虚拟栈的时候你还要注意检查栈的剩余空间的问题。但是这个就不在这里展开说明了。有兴趣可以研究一下官方手册。</p>
+
+</body></html>

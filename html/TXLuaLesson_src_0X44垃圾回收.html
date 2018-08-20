@@ -1,0 +1,58 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X44垃圾回收</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X43更多重载</li>
+</ul>
+<h2>正文</h2>
+<h3>内存回收</h3>
+<p>Lua有自动的内存管理机制,当一个数据不再可以通过任何变量访问时,它就会被Lua虚拟机回收.但是具体什么时候进行垃圾回收,回收多少都是由Lua自己确定的.</p>
+<p>使用函数collectgarbage函数可以操作Lua的垃圾回收器.</p>
+<p>带有字符串参数<code>'count'</code>的时候它会返回当前Lua虚拟机使用的总内存(单位为kb).</p>
+<p>使用参数<code>'collect'</code>的时候会运行一次垃圾回收循环释放内存.如果没有参数传入,这也是默认的参数.</p>
+<p>带参数<code>'isrunning'</code>会返回一个逻辑值表示自动垃圾回收是否开启.</p>
+<p>参数<code>'stop'</code>会关闭自动垃圾回收.通过这方式关闭后,必须用参数<code>'restart'</code>才能开启自动垃圾回收.</p>
+<p>Lua的垃圾回收使用两个变量来控制其垃圾回收的效率--回收间歇率和回收倍率.</p>
+<p>间歇率表示两次垃圾回收之间的等待时间.通过参数<code>'setpause'</code>后加要设置的值设定.</p>
+<p>倍率越大则垃圾回收器的工作速度越快.但是如果倍率过大,可能垃圾回收器本身的内存占用都大于用户程序.倍率通过<code>'setstepmul'</code>后加要设定的值设置.</p>
+<p>最后,<code>'step'</code>参数控制垃圾回收器单步运行.它后继一个数字参数用于表示目标大小.如果第二个参数是非零值,则它会尝试运行垃圾回收,使得内存占用小于第二个参数.如果成功运行一次垃圾回收则会返回true.否则返回false.如果给与的第二个参数是0,收集器会步进不可分割的一步,这就涉及到了Lua的虚拟机内部机制.</p>
+<h3>析构函数</h3>
+<p>如果一个表的元表中设置了<code>'__gc'</code>项目,那么在这个表被回收的时候回会执行<code>'__gc'</code>对应的函数,并且把表本身作为参数.例如:</p>
+<blockquote>
+<pre><code class="language-lua">t={<span class="hljs-built_in">__gc</span>=<span class="hljs-built_in">print</span>}
+x={}
+<span class="hljs-built_in">setmetatable</span>(x,t)
+x=<span class="hljs-literal">nil</span>
+colletcgarbage()
+</code></pre>
+</blockquote>
+<h3>弱表</h3>
+<p>如果一个表可以被至少一个变量访问到,则它就不会被垃圾回收检测到.但是在数据处理中经常有一些非常大的表.我们希望它在不常用的时候就被回收掉,一定要用的时候再重新载入.Lua就提供了一种叫做弱引用的方法.</p>
+<p>Lua没有指针类型,所以弱引用通过表实现.弱表是通过设置元表获得的.</p>
+<p>设置弱表需要改变元表中的<code>'__mode'</code>项目.这应该是一个字符串,如果其中包含<code>'v'</code>则是值弱引用,如果包含<code>'k'</code>则是键弱引用,如果这两个字符都包含则是键/值弱引用.</p>
+<p>先来说说键弱引用,这是官方给出的示例代码:</p>
+<pre><code class="language-lua">a = {}
+b = {}
+<span class="hljs-built_in">setmetatable</span>(a, b)
+b.<span class="hljs-built_in">__mode</span> = <span class="hljs-string">"k"</span>         <span class="hljs-comment">-- now `a' has weak keys</span>
+key = {}               <span class="hljs-comment">-- creates first key</span>
+a[key] = <span class="hljs-number">1</span>
+key = {}               <span class="hljs-comment">-- creates second key</span>
+a[key] = <span class="hljs-number">2</span>
+<span class="hljs-built_in">collectgarbage</span>()       <span class="hljs-comment">-- forces a garbage collection cycle</span>
+<span class="hljs-keyword">for</span> k, v <span class="hljs-keyword">in</span> <span class="hljs-built_in">pairs</span>(a) <span class="hljs-keyword">do</span> <span class="hljs-built_in">print</span>(v) <span class="hljs-keyword">end</span>
+</code></pre>
+<p>这里的表是键弱引用.所以对于这个弱表b中的条目,一旦某个条目的键除了表中的引用之外,没有任何其他引用.这个条目就会整个被垃圾回收机制清除.</p>
+<p>如果是表是值弱引用,则当一个条目的值除了表中引用之外没有任何其他引用这个条目就会整个被回收.</p>
+<p>如果是键/值弱引用,则键或者值有一个处于上述状态,整个条目就会被回收.</p>
+<h2>后续推荐</h2>
+<p>暂无</p>
+
+</body></html>

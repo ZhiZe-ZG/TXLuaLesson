@@ -1,0 +1,101 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X3B命令行参数</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X32模块搜寻</li>
+</ul>
+<h2>正文</h2>
+<h3>Lua解释器</h3>
+<p>由于Lua语言小巧精悍的特性,它经常被用于写脚本.而它的执行环境也可以嵌入各种各样的语言和工程之中.不过,我们也可以把它作为一门独立的语言使用.这就是独立Lua.独立Lua的虚拟机由C语言写成,在Ubuntu,Arch等发行版的软件库中就可以下载到.如果需要,也可以去官网下载源码包自行安装.</p>
+<p>演示: Lua源码包的安装与卸载 <a href="https://www.bilibili.com/video/av16910663/">https://www.bilibili.com/video/av16910663/</a></p>
+<p>直接执行命令<code>lua</code>(或者<code>lua5.3</code>什么的),会启动交互式的Lua环境.从课程一开始我们就在这里实验代码.</p>
+<p><code>lua</code>命令后接文件名,会尝试用Lua虚拟机执行指定脚本.这种执行方法是一般的运行Lua程序的方法.交互模式和执行脚本这两种模式中,Lua的语法大致一致.但是会有一些执行细节上的区别,例如交互模式中美哟被接收的返回值默认会显示到终端,而脚本模式不会.又例如交互模式下,每一次执行命令,都当成一个chunk编译(哪怕是很多个简单的语句顺寻执行).</p>
+<h3>命令行参数</h3>
+<p><code>lua</code>的命令行参数一般加到<code>lua</code>之后,要执行的脚本名之前.</p>
+<p>参数<code>-e</code>后需要一个额外的字符串作为参数.会在执行脚本之前,把这个字符串作为Lua命令执行.例如创建脚本名为'test.lua'.其内容为:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">print</span>(<span class="hljs-string">'x is'</span>,x)
+</code></pre>
+</blockquote>
+<p>然后在命令行中执行</p>
+<blockquote>
+<pre><code class="language-bash">lua -e <span class="hljs-string">'x=843'</span> test.lua
+</code></pre>
+</blockquote>
+<p>参数<code>-l</code>后也需要一个额外的字符串.它类似于<code>-e</code>.它的作用是把字符串当作模块名,在执行脚本(或者打开交互式环境)前require这个模块.例如创建脚本名为'test2.lua'.其内容为:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-keyword">return</span> <span class="hljs-number">8899</span>
+</code></pre>
+</blockquote>
+<p>然后在命令行中输入:</p>
+<blockquote>
+<pre><code class="language-bash">lua -l <span class="hljs-string">'test2'</span>
+</code></pre>
+</blockquote>
+<p>在启动的交互式环境中执行:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">print</span>(test2)
+</code></pre>
+</blockquote>
+<p>参数<code>-v</code>会显示Lua的虚拟机(或者说解释器,编译器)的版本号.</p>
+<h3>环境变量设置</h3>
+<p>如果Lua虚拟机在启动时没有加参数<code>-E</code>,它会首先查找shell的环境变量<code>LUA_INIT_5_3</code>或者<code>LUA_INIT</code>.然后根据找到的shell环境变量设置Lua虚拟机的环境变量.</p>
+<h3>从标准输入流读取</h3>
+<p>如果输入以下命令.lua会把标准输入流当作一个文件读入.(一般Linux下,按EOF的快捷键C-d才能终止读入.)</p>
+<blockquote>
+<pre><code class="language-bash">lua -
+</code></pre>
+</blockquote>
+<h3>终止参数设置</h3>
+<p>为了防止混淆Lua虚拟机的参数,Lua脚本名和要传递给Lua脚本的参数,可以使用<code>--</code>显示终止虚拟机参数设置.</p>
+<blockquote>
+<pre><code class="language-bash">lua -e <span class="hljs-string">'x=1245'</span> -- -i
+</code></pre>
+</blockquote>
+<p>这里<code>-i</code>不会被当作一个虚拟机参数处理.</p>
+<h3>运行脚本</h3>
+<p>除了显式指定虚拟机运行脚本.在类Unix系统上,还可通过改变Lua脚本文件的权限(例如<code>chmod 755 test.lua</code>)来直接通过文件名运行Lua脚本.</p>
+<p>除了改变文件名,还需要在脚本文件首行加入一个特殊的不包含在Lua标准语法中的说明:</p>
+<blockquote>
+<pre><code class="language-lua">#!/usr/<span class="hljs-keyword">local</span>/bin/lua
+</code></pre>
+</blockquote>
+<p>这一行的作用是指定要用什么程序执行这个脚本.在井号和感叹号之后是我的lua虚拟机地址.如果你不太确定你的lua虚拟机安装路径可以尝试使用<code>which lua</code>命令查看.</p>
+<p>改变文件模式,并添加说明行后.就可以直接运行脚本,例如:</p>
+<blockquote>
+<pre><code class="language-bash">./test.h
+</code></pre>
+</blockquote>
+<h3>注释</h3>
+<p>如果源码中出现了双连词符(不在引号中),那么从双连词符直到行尾(以换行符为准)的内容为注释.</p>
+<p>所谓的注释就是不会被执行的内容,它们的存在仅仅是为了让程序员更容易读懂代码.而且一般我们不在交互式环境中使用注释,而是在脚本中使用注释.</p>
+<p>在写代码的时候,尽量给关键的变量,步骤,函数定义等做注释.例如:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-comment">--this function equal to print</span>
+f=<span class="hljs-built_in">print</span>
+<span class="hljs-comment">--print hello world</span>
+f(<span class="hljs-string">'hello world'</span>)
+</code></pre>
+</blockquote>
+<p>使用多行注释,可以将多行字符串与注释语法复合,例如:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-comment">--[[
+   first
+   second
+   third
+]]</span>
+</code></pre>
+</blockquote>
+<h2>后续推荐</h2>
+<ul>
+<li>0X3C系统工具函数</li>
+</ul>
+
+</body></html>

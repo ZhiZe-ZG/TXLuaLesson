@@ -1,0 +1,82 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X3C系统工具函数</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X3B命令行参数</li>
+</ul>
+<h2>正文</h2>
+<h3>交互模式</h3>
+<p>参数<code>-i</code>会在执行过脚本之后进入交互式编程环境.</p>
+<p>退出交互模式一般有两种方法.一是输入文件终止符(EOF),一般类Unix系统shell下快捷键是C-d,Windows下的快捷键是C-z.</p>
+<p>另一种方法是调用标准库中的函数os.exit.这个函数可以不带参数调用,也可以带参数.</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">os</span>.<span class="hljs-built_in">exit</span>(<span class="hljs-literal">true</span>)
+</code></pre>
+</blockquote>
+<p>这个调用,推出状态为<code>EXIT_SUCCESS</code>.如果用<code>false</code>,则退出状态为<code>EXIT_FAILURE</code>.</p>
+<p>其实它还可以接收第二个可选参数,如果第二个可选参数为<code>true</code>.则会在退出前关闭Lua state.至于Lua state是什么,可能要到介绍Lua和C的交互时会有所涉及.</p>
+<h3>获取系统环境变量</h3>
+<p>使用os.getenv函数可以获取系统环境变量(例如bash中的PATH变量等).需要把变量名作为参数传入.例如:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">os</span>.<span class="hljs-built_in">getenv</span>(<span class="hljs-string">'PATH'</span>)
+</code></pre>
+</blockquote>
+<h3>设置区域设置(本地化)</h3>
+<p>区域设置可能影响到时间显示,数字显示等的方式.Lua可以设置当前进程的区域设置.这个区域设置独立于系统的区域设置.</p>
+<p>它接受的第一个参数locale是表示要设置的区域的字符串.如果为空字符串则设置为和系统一致.如果为<code>&quot;C&quot;</code>则设置为标准C的设置.</p>
+<p>它还有一个可选参数category.这个参数表示要设置的项目类别,默认为<code>&quot;all&quot;</code>,表示全部可选的内容.除此以外可选的项目还有:</p>
+<table>
+<thead>
+<tr>
+<th>字符串</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>collate</td>
+</tr>
+<tr>
+<td>ctype</td>
+</tr>
+<tr>
+<td>monetary</td>
+</tr>
+<tr>
+<td>numeric</td>
+</tr>
+<tr>
+<td>time</td>
+</tr>
+</tbody>
+</table>
+<p>如果调用 这个函数时传给第一个参数nil值,则它会返回指定目录当前的区域设置.</p>
+<p>例如:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">os</span>.<span class="hljs-built_in">setlocale</span>()
+<span class="hljs-built_in">os</span>.<span class="hljs-built_in">setlocale</span>(<span class="hljs-literal">nil</span>,<span class="hljs-string">'ctype'</span>)
+</code></pre>
+</blockquote>
+<h3>执行shell命令</h3>
+<p>函数os.execute接受一个字符串作为参数.然后把这个字符串交给shell(例如bash去执行),并且返回执行状态.例如:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">os</span>.<span class="hljs-built_in">execute</span>(<span class="hljs-string">'echo hello'</span>)
+</code></pre>
+</blockquote>
+<h3>交互式编程环境快捷键</h3>
+<p>Lua的交互式编程有一些快捷键.</p>
+<p>C-d可以退出交互式编程环境(实际上就是输入了EOF文件终止符).</p>
+<p>C-c可以终止交互式编程环境的运行.但是当交互式编程环境陷入死循环(或者执行一个语句或函数的时候),可以使用这个快捷键终止当前正在交互式编程环境中执行的Lua程序.</p>
+<p>C-r可以进入交互式编程环境的历史命令搜索.(如果你要用的一条命令之前输入过,用上下方向键去找又太麻烦的时候,用这个就能快速找到之前输入的命令).注意每次交互式编程环境重启都会清空上次的历史命令.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X3E简单输入输出流</li>
+</ul>
+
+</body></html>

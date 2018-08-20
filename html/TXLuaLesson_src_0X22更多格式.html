@@ -1,0 +1,64 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X22更多格式</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X21格式化输出</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>如果希望用小数的形式输出数字（哪怕你给予的替换参数是个整数），就使用占位符%f替代%i。（%F也可以。）
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%f %f %f\n%f %f %f'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>%f和%F中间也可以加一个浮点数表示对位数的规定。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%6.2f %6.2f %6.2f'</span>,<span class="hljs-number">1.234</span>,<span class="hljs-number">4532.4</span>,<span class="hljs-number">3.56</span>)
+</code></pre>
+</blockquote>
+<ul>
+<li>这个数的整数部分表示浮点数总体应该多少位（包括小数点和小数位）</li>
+<li>小数点后的数表示应该保留多少位</li>
+<li>例如%07.3f表示把一个数按浮点形式显示。总体应该为7位（算上小数点）。小数最多3位。不够的位数用0在左侧补齐。</li>
+<li>上例中如果整数已经超过7位，不会截断整数部分。</li>
+</ul>
+</li>
+<li>要把一个数按科学计数法显示就用%e或%E。%g或%G则依据精确值自动选择输出形式。十六进制科学计数法用%a或%A。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%e %e %e\n%a %a %a'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>额外说明一下，十六进制和科学计数法的占位符分别都有两种写法。如果用了大写形式的占位符，输出中用到字母的地方也会大写。例如：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%#x %#X'</span>,<span class="hljs-number">897</span>,<span class="hljs-number">345</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>%c占位.会被对应位置上参数所对应的字符所替代.例如:
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'A%c%cD'</span>,<span class="hljs-number">66</span>,<span class="hljs-number">67</span>)
+</code></pre>
+</blockquote>
+这条代码返回的字符串是&quot;ABCD&quot;.其中第一个%c被66所对应的字符替换.而大写'B'的十进制ASCII码值正是66.第二个%c对应67,因同理被替换为了'C'.</li>
+<li>如果希望一个字符串来替代占位符，则使用%s或%q。如果用%q，则字符串替换时会带上双引号。例如：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%s %q'</span>,<span class="hljs-string">'hello'</span>,<span class="hljs-string">'world'</span>)
+</code></pre>
+</blockquote>
+如果本应该输入字符串的地方传入了非字符串的值,这个函数会先尝试把它们转化为字符串.</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X2A支持UTF8</li>
+</ul>
+
+</body></html>

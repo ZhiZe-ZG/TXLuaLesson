@@ -1,0 +1,54 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X39长度匹配</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X38字符类</li>
+</ul>
+<h2>正文</h2>
+<h3>匹配任意个字符</h3>
+<p>目前为止我们介绍的正则表达式可以匹配某个位置上的任意字符.但是无法匹配变长度的字符串.</p>
+<p>在模式字符串中任意的字符或者字符类后加<code>'*'</code>表示匹配这个字符类零次或者任意次.例如:</p>
+<blockquote>
+<pre><code class="language-lua">p=<span class="hljs-string">'a[bc]*d'</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'abbbbbd'</span>,p)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'ad'</span>,p)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'acbcbd'</span>,p)
+</code></pre>
+</blockquote>
+<p>类似的,<code>'+'</code>表示匹配一到任意次.</p>
+<p>星号和加号都会匹配尽量长的字符串.而同样是匹配零到任意次的<code>'-'</code>则是尽量匹配短的.符号<code>'?'</code>则表示匹配零次或者一次.如果可能的情况下它会尽量匹配一次.</p>
+<blockquote>
+<pre><code class="language-lua">str=<span class="hljs-string">'baaaaa'</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,<span class="hljs-string">'ba*'</span>)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,<span class="hljs-string">'ba-'</span>)
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,<span class="hljs-string">'ba?'</span>)
+</code></pre>
+</blockquote>
+<h3>匹配开头结尾</h3>
+<p>表达式<code>'%b'</code>后加两个字符.表示匹配一个字符串以<code>'%b'</code>后第一个字符开始,以第二个字符结束的字符串.例如匹配圆括号括起来的部分:</p>
+<blockquote>
+<pre><code class="language-lua">str=<span class="hljs-string">'abc(ano)ee'</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(str,<span class="hljs-string">'%b()'</span>)
+</code></pre>
+</blockquote>
+<p>注意在<code>'%b'</code>后边两位出现正则表达式中有语法意义的特殊符号不需要转义,也不能使用字符类.</p>
+<p>注意这个也会尽量匹配</p>
+<h3>边界检测</h3>
+<p>表达式<code>'%f'</code>后加一个自定义字符类.它返回的第一个值是一个属于这个类的字符的位置.而返回的第二个值只和第一个值差1,在这个位置上的字符是不属于指定的字符类的.例如:</p>
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">find</span>(<span class="hljs-string">'aoeui12345'</span>,<span class="hljs-string">'%f[%A]'</span>)
+</code></pre>
+</blockquote>
+<h2>后续推荐</h2>
+<ul>
+<li>0X3A捕获和其他</li>
+</ul>
+
+</body></html>

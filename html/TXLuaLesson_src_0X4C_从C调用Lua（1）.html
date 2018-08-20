@@ -1,0 +1,63 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X4C 从C调用Lua（1）</h1>
+<p>这一期我们来演示一个从C调用Lua的实例。我们写一个C程序，在其中启动Lua虚拟机，并且让虚拟机执行一条Lua语句。</p>
+<p>我将把源码拆开讲解。</p>
+<h2>头文件和常量</h2>
+<p>首先创建一个文本文件叫做“calllua1.c”。然后在其中写上头文件包含。</p>
+<p>首先是会用到的C标准库。</p>
+<pre><code class="language-C"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;string.h&gt;</span></span>
+</code></pre>
+<p>然后是可能用到的Lua头文件。</p>
+<pre><code class="language-C"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;lua.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;lualib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span><span class="hljs-meta-string">&lt;lauxlib.h&gt;</span></span>
+</code></pre>
+<p>我们计划让Lua输出一句话。先把这个Lua语句作为字符串常量声明。</p>
+<pre><code class="language-C"><span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* comm=<span class="hljs-string">"print('hello my lua')"</span>;
+</code></pre>
+<h2>主函数</h2>
+<p>函数头主体。</p>
+<pre><code class="language-C"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>填入我们需要的命令后得到：</p>
+<pre><code class="language-C"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    lua_State* L; <span class="hljs-comment">//declare a point</span>
+    L=luaL_newstate(); <span class="hljs-comment">//create virtual machine.</span>
+    luaL_openlibs(L); <span class="hljs-comment">//open lua standard lib.</span>
+    luaL_loadbuffer(L,comm,<span class="hljs-built_in">strlen</span>(comm),<span class="hljs-string">"line"</span>); <span class="hljs-comment">//compile command.</span>
+    lua_pcall(L,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>); <span class="hljs-comment">//excute command.</span>
+    lua_close(L); <span class="hljs-comment">//close virtual machine.</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>L是一个指向Lua虚拟机的指针变量。通过luaL_newstate()创建一个新虚拟机并且赋值给L。</p>
+<p>luaL_openlibs会在虚拟机L中导入所有的Lua标准库。（相当于在虚拟机中把所有标准库require一遍。）</p>
+<p>luaL_loadbuffer的作用是往一个虚拟机中加载一个字符串（这个字符串的内容是一个Lua语句）。其中L是要加载命令的虚拟机，comm是要加载的命令，strlen(comm)是要加载的命令的长度。这个命令加载到虚拟机中后会作为一个代码块（chunk），字符串&quot;line&quot;是这个代码块的名字（在这个代码块debug到错误的时候会显示这个名字）。运行这一行之后相当于把我们要执行的命令输入了虚拟机（但是还没有开始执行）。</p>
+<p>lua_pcall的作用是调用虚拟机的中的函数。但是我们这里的写法“lua_pcall(L,0,0,0)”实际上就是在虚拟机L中执行我们刚刚载入的命令。</p>
+<p>lua_close的作用是关闭指定虚拟机。</p>
+<h2>编译</h2>
+<p>使用命令</p>
+<pre><code class="language-shell">gcc calllua1.c -o test1 -llua -lm -ldl
+</code></pre>
+<p>进行编译。</p>
+<p>其中“-o test1”表示把编译结果命名为“test1”。</p>
+<p>后边的三个参数分别用于说明链接库。“-llua”是链接Lua库，“-lm”是链接数学库（lua的头文件中引用了数学库），“-ldl”据说是为了解析未定义的&quot;dlopen&quot;等引用（但是“-ldl”并不是所有的发行版上都要用）。</p>
+<p>如果使用上边的命令提示头文件或者库找不到，就试试这个：</p>
+<pre><code class="language-shell">gcc calllua1.c -o test1 -I /usr/local/include -L /usr/local/lib -llua -lm -ldl
+</code></pre>
+<p>其中“-I”表示指定头文件目录。后跟的“/usr/local/include”是头文件目录。“-L”表示指定库目录，后跟的“/usr/local/lib”是库目录。</p>
+<h2>参考资料</h2>
+<p>除了官方的文档和在线电子书<em>Programming in Lua</em>，我还参考了以下资料：</p>
+<p><a href="http://lua-users.org/wiki/SimpleLuaApiExample">http://lua-users.org/wiki/SimpleLuaApiExample</a>
+<a href="http://www.jb51.net/article/65224.htm">http://www.jb51.net/article/65224.htm</a></p>
+
+</body></html>

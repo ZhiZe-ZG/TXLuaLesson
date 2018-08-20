@@ -1,0 +1,79 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X11更复杂的函数</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X0C函数定义</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>如果要定义接收多个变量的函数（注意不是任意个变量）。则把所有需要的形参写在形参列表里，用逗号隔开。例如
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFunc1</span><span class="hljs-params">(x1,x2,x3)</span></span> <span class="hljs-keyword">return</span> x1^<span class="hljs-number">2</span>+x2^<span class="hljs-number">2</span>+x3^<span class="hljs-number">2</span> <span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+调用的时候依次填实参，对应位置的实参会给对应位置的形参赋值。例如：
+<blockquote>
+<pre><code class="language-lua">myFunc1(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>)
+</code></pre>
+</blockquote>
+这个函数调用大致相当于
+<blockquote>
+<pre><code class="language-lua">x1,x2,x3=<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>
+x1^<span class="hljs-number">2</span>+x2^<span class="hljs-number">2</span>+x3^<span class="hljs-number">2</span>
+</code></pre>
+</blockquote>
+</li>
+<li>严格定义的函数只能有一个返回值。Lua中的函数看起来是允许返回多个值的。只要在return语句后边把要返回的多个值用逗号分开就行。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFunc2</span><span class="hljs-params">(x)</span></span> <span class="hljs-keyword">return</span> x^<span class="hljs-number">2</span>,x^<span class="hljs-number">3</span> <span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+调用的时候会返回x的二次方和三次方。如果要用赋值语句把返回值赋值给变量，也按多重赋值的规则。最多可以赋值给返回值个数个变量
+<blockquote>
+<pre><code class="language-lua">a,b=myFunc2(<span class="hljs-number">5</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>这一条是拓展知识，看不懂也没关系：Lua的函数能返回多个返回值，其实也可以在数学上有个合理的解释。数学上规定了函数只能有一个返回值，但是没有规定返回值必须是什么类型。所以可以先把要返回的多个量组装成一个向量，比如有34，12两个值要返回就组装成（34，12）。把这个向量返回还是只算一个返回值。返回之后再把向量拆开给多个变量赋值。Lua隐藏了中间步骤，所以看起来就能一次性返回多个返回值了。</li>
+<li>要想把所有的计算都在return后的表达式中写明显然比较困难。数学上的方案是在函数里调用函数，例如：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sumSq</span><span class="hljs-params">(x,y)</span></span> <span class="hljs-keyword">return</span> x^<span class="hljs-number">2</span>+y^<span class="hljs-number">2</span> <span class="hljs-keyword">end</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFunc3</span><span class="hljs-params">(x,y,z)</span></span> <span class="hljs-keyword">return</span> sumSq(x,y)+sumSq(y,z) <span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+这里的sumSq求两个变量的平方和。然后myFunc3又调用sumSq。</li>
+<li>但是由于实际中Lua语言的解释器不一定能做到很好的优化。每一步算术都调用一层函数，当嵌套层次过深的时候会极大地消耗计算机资源。导致程序运行得很慢。我们可以把复杂度适中的多步运算打包到一个函数定义中。return语句的部分，也叫做函数体。函数体可以有多行语句，用回车分行就行了（就像分步算术中那样）。我们可以在这里定义新变量作为中间变量，执行运算和赋值。例如把第4点中的例子改写为一个函数：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFunc4</span><span class="hljs-params">(x,y,z)</span></span>
+a=x^<span class="hljs-number">2</span>+y^<span class="hljs-number">2</span>
+b=y^<span class="hljs-number">2</span>+z^<span class="hljs-number">2</span>
+c=a+b
+<span class="hljs-keyword">return</span> c
+<span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+调用函数就会调用函数头（函数名和参数列表）之后，end之前的语句。</li>
+<li>视频演示：定义多行函数体 <a href="https://www.bilibili.com/video/av14216200/">https://www.bilibili.com/video/av14216200/</a></li>
+<li>在函数定义中换行，Lua虚拟机的提示符会变成“...&gt;”。在输入与开头function匹配的end之前，所有语句都不会执行，直到整个函数定义写完。</li>
+<li>如果你执意要把所有代码写到一行也不是不可以。用分号;代替函数体中本来该换行的地方就可以了。但是这样代码可读性会非常差。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">myFunc5</span><span class="hljs-params">(x,y,z)</span></span> a=x^<span class="hljs-number">2</span>+y^<span class="hljs-number">2</span>;b=y^<span class="hljs-number">2</span>+z^<span class="hljs-number">2</span>;c=a+b;<span class="hljs-keyword">return</span> c <span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+</li>
+<li>最后再补充一点。函数中可以出现任意个return语句。但是一旦执行到一个return语句，其后的所有语句都不再执行。函数返回返回值后结束。如果执行到与函数定义匹配的end都没有执行过return。那么将返回一个nil值（后续介绍nil）。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X13变量与值</li>
+<li>0X14选择结构</li>
+</ul>
+
+</body></html>

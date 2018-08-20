@@ -1,0 +1,53 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X41动态脚本</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X40读取文件</li>
+</ul>
+<h2>正文</h2>
+<h3>构建自我</h3>
+<p>Lua的脚本就是一个普通的文本,Lua又有编辑文本的能力.如果Lua能轻松地调用执行别的Lua脚本文件,它就有了自我复制,自我修改的能力.之前我们已经介绍了如何编写模块,这里我们介绍一种更直接的方法.</p>
+<p>dofile函数接受一个字符串作为参数(表示文件名),表示把目标文件当作Lua脚本执行.并且把脚本执行的返回值作为自己的返回值返回.例如</p>
+<blockquote>
+<pre><code class="language-lua">x=<span class="hljs-built_in">dofile</span>(<span class="hljs-string">'hello.lua'</span>)
+</code></pre>
+</blockquote>
+<h3>装载(编译)</h3>
+<p>如果你仅仅希望把脚本装载,在需要的时候再执行.就可以使用load和loadfile函数.</p>
+<p>load函数最多接受四个参数:chunk,chunkname,mode,env.其中后三个为可选.</p>
+<p>chunk为必选,它是一个字符串.load函数把这个字符串当作脚本装载,并返回一个函数.以后执行这个函数就相当于执行chunk中的命令.例如:</p>
+<blockquote>
+<pre><code class="language-lua">y=<span class="hljs-built_in">load</span>(<span class="hljs-string">'print("hello"'</span>)
+y()
+</code></pre>
+</blockquote>
+<p>默认load的chunk都是匿名的.这回在调试的时候带来麻烦(比如显示错误信息的时候).所以可以通过chunkname(这是一个字符串)给它指定一个名字.</p>
+<p>mode也是一个字符串,它有三种可能:仅二进制'b',仅文本't',二进制或文本'bt'.这个会涉及Lua的编译原理,现在只需要知道默认是'bt'.</p>
+<p>参数env用于设置环境变量,目前不需要操作这个参数.</p>
+<p>loadfile函数类似于load.但是它不接受chunk和chunkname,而是接受filename.它把指定文件装载为一个函数.</p>
+<h3>反向转换</h3>
+<p>在Lua中可以执行的函数都有其二进制形式.我们可以使用string.dump函数将其二进制形式的代码转化成字符串(只是简单的数据拷贝,不是逆编译).当作普通的字符串进行传递.</p>
+<p>传递到目标之后再使用load装载,然后就可以执行了.例如:</p>
+<blockquote>
+<pre><code class="language-lua">f=<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(x)</span></span> <span class="hljs-keyword">return</span> x*x <span class="hljs-keyword">end</span>
+strf=<span class="hljs-built_in">string</span>.<span class="hljs-built_in">dump</span>(f)
+y=<span class="hljs-built_in">load</span>(strf)
+y(<span class="hljs-number">12</span>)
+</code></pre>
+</blockquote>
+<p>string.dump还有一个可选参数,如果可选参数为true,则不会把debug信息和实现函数代码的功能一同dump出来.</p>
+<h2>后续推荐</h2>
+<ul>
+<li>0X42重载运算</li>
+<li>0X45错误处理</li>
+<li>0X47同时执行</li>
+</ul>
+
+</body></html>

@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X46异常处理</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X45错误处理</li>
+</ul>
+<h2>正文</h2>
+<h3>异常</h3>
+<p>对于不太严重,不危及程序整体运作的小问题,我们不一定需要停止程序并产生错误信息.这时就可以使用异常机制.</p>
+<p>我们把可能出错(包括Lua内预定义的各种导致程序终止的错误,和我们调用assert或error函数产生的错误)的代码打包成一个函数.然后把这个函数传递个pcall(或者xpcall),pcall会执行我们的函数,但是当出现错误的时候只会终止局部程序(我们的函数本身的运行).pcall后边的代码还会继续执行,不会导致整个程序崩溃.</p>
+<h3>异常处理</h3>
+<p>pcall函数的第一个参数就是我们要执行的代码块打包成的参数.后边还可以接受任意个参数,这些参数会当作实参传递给我们要调用的函数本身.</p>
+<p>如果一切正常地执行完,pcall会返回true.否则返回false,表示执行失败.</p>
+<p>如果执行失败,pcall还会返回一个额外返回值表示错误信息.</p>
+<p>我们可以把pcall用于选择结构来构造类似其他语言中的try-catch类型的异常处理:</p>
+<pre><code class="language-lua"><span class="hljs-keyword">if</span> (<span class="hljs-built_in">pcall</span>(f)) <span class="hljs-keyword">then</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">'success'</span>)
+<span class="hljs-keyword">else</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">'failed'</span>)
+<span class="hljs-keyword">end</span>
+</code></pre>
+<h3>xpcall</h3>
+<p>xpcall在要调用的函数和给函数的参数列表之间加入了一个必选参数msgh.这也是一个函数.当发生错误的时候,xpcall调用这个函数处理错误,并且把错误信息作为参数传递给它.</p>
+<p>在Lua的标准库的debug模块中,提供了一些错误处理函数.例如debug.debug会启动一个Lua交互式编程环境供用户调试程序.</p>
+<h2>后续推荐</h2>
+<p>暂无</p>
+
+</body></html>

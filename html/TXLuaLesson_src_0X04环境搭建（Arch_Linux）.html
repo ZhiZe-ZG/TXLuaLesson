@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0x04环境搭建（Arch Linux）</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X03虚拟机程序</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>如果你是Linux用户，那么我默认你会使用bash之类的字符终端shell，熟悉命令行。</li>
+<li>有的发行版会预装Lua虚拟机。但是Arch Linux没有预装Lua。我们需要通过包管理程序下载安装Lua虚拟机。</li>
+<li>更新包管理软件的源之后，执行下列命令安装Lua：
+<blockquote>
+<pre><code class="language-bash">pacman -S lua
+</code></pre>
+</blockquote>
+</li>
+<li>完成安装之后执行lua命令验证一下安装是否成功:
+<blockquote>
+<pre><code class="language-bash">lua
+</code></pre>
+</blockquote>
+</li>
+<li>使用C-z终止交互式解释器进程。然后再试试另一个命令<code>luac</code>。这个命令将在比较深入的课程中用到。</li>
+<li>对于linux来说安装了以下部分
+<ul>
+<li>Lua虚拟机主要由三部分组成：库、Lua编译器、Lua解释器。这三个部分都是编译好的，可以直接运行或者调用的程序。</li>
+<li>还有两个比较外围的部分：说明手册和头文件。其中头文件用于C/C++语言编写Lua拓展，调用Lua虚拟机的库。</li>
+</ul>
+</li>
+<li>视频演示：ArchLinux安装Lua虚拟机 <a href="https://www.bilibili.com/video/av13807516/">https://www.bilibili.com/video/av13807516/</a></li>
+<li>当然，你也可以下载Lua虚拟机源码，按照说明自行编译安装。</li>
+<li>我在本系列课程中使用的Lua虚拟机版本是5.3.4。</li>
+<li>完整的开发环境其实还应该包括代码编辑，调试工具等其他工具。但是Linux用户一般都有一款自己信仰的代码编辑器，我就不做推荐了。至于其他工具，会在用得到的时候介绍。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X06就像计算器</li>
+</ul>
+
+</body></html>

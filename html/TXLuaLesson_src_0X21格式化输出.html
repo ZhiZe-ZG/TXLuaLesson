@@ -1,0 +1,114 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X21格式化输出</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X20自定义计算器</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>print函数可以输出传递给它的参数到标准输出流(目前接触到的输出流就是命令行终端).
+<ul>
+<li>如果传递给它的参数不是字符串它会尝试把这些参数转化为字符串输出.</li>
+<li>如果给予了多个参数.print自动在输出的这些参数之间添加空白符号.</li>
+<li>调用一次print,至少会在行尾输出一个换行符.</li>
+</ul>
+</li>
+<li>有时候我们需要生成格式化的字符串，根据变量的值转化出格式化的字符串。例如表示日期和时间的&quot;2017.09.10(Sun) 20:34:02&quot;,表示金额的&quot;$32.34&quot;。或者我们希望只显示求出的圆柱体体积的前两位小数.</li>
+<li>通过string.format函数可以生成指定格式的字符串。
+<ul>
+<li>它接收的第一个参数是一个字符串，称为格式字符串，后文中假设其变量名为fstr。</li>
+<li>除了格式字符串，这个函数还能接受任意个参数。这些参数将按照格式字符串中占位符的规定，替换到指定位置，生成格式化的字符串。</li>
+<li>生成格式化的字符串后，函数把它作为返回值返回。</li>
+</ul>
+</li>
+<li>string.format函数的格式字符串的语法规则和C语言的sprintf等函数大致相同（有一些格式不支持，详见Lua官方文档）。这里简单介绍一些用法，更多的详见C语言的参考文档。</li>
+<li>关于格式字符串fstr
+<ul>
+<li>fstr中除了占位符以外的字符会被原样保留到返回的字符串中。</li>
+<li>fstr中的符号%和百分号后一系列符合语法规定的符号组成占位符（或格式说明符）。</li>
+<li>所有的占位符会被格式字符串之后的参数转化成的字符串替换。</li>
+<li>如果出现两个连续的%，则表示一个单独的%。（原理类似\做转义符。）</li>
+</ul>
+</li>
+<li>%i占位会被一个整数替代（%d的效果一样）。例如
+<blockquote>
+<pre><code class="language-lua">x=<span class="hljs-number">6</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'This is number %i.'</span>,x)
+</code></pre>
+</blockquote>
+结果是“This is number 6.”。</li>
+<li>如果有多个占位符，则应当在格式字符串后应该有等量的变量。按顺序，对应替换。例如:
+<blockquote>
+<pre><code class="language-lua">y=<span class="hljs-number">2017</span>
+m=<span class="hljs-number">9</span>
+d=<span class="hljs-number">10</span>
+<span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'year:%i month:%i day:%i'</span>,y,m,d)
+</code></pre>
+</blockquote>
+</li>
+<li>演示：格式字符串 <a href="https://www.bilibili.com/video/av15885547/">https://www.bilibili.com/video/av15885547/</a></li>
+<li>其他进制输出和当作无符号整数输出:
+<ul>
+<li>如果用%o取代%i，会让整数以八进制输出。</li>
+<li>如果用%x或%X，以十六进制输出。</li>
+<li>在%后，x或o之前加#可以切换可选格式。这个格式下八进制数前会加0，十六进制数前会加0x。</li>
+<li>%u会把对应位置的参数当作无符号整数输出。所以如果正好对应一个绝对值较小的负数，可能会输出一个特别大的数。</li>
+</ul>
+</li>
+<li>如果无心搞命令行上的界面，看过这里之后，到下一章再看一下字符，字符串，浮点数的占位符是什么就行了。</li>
+<li>尝试显示一个数字表格：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%i %i %i\n%i %i %i'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+```lua
+</code></pre>
+</blockquote>
+每行对不齐，不太好看（用\t来解决，解决不彻底而且比较繁琐）。这时可以规定替换来的每个数的位数。如果位数小于这个规定值，就会用空格补全。
+写法是把规定的位数写在%之后i之前。例如规定每个数字5位：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%5i %5i %5i\n%5i %5i %5i'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>默认数字右对齐,可以在%之后，数字之前加负号。表示格式上左对齐。例如这里让第二行左对齐：
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%5i %5i %5i\n%-5i %-5i %-5i'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>如果替换的整数参数是负数，输出时会带符号。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%5i %5i %5i\n%5i %5i %5i'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">-6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">-65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+如果希望正数也显示正号，就在格式字符串的占位符中%后，数字前增加符号+（可以和左对齐叠加使用）。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%+5i %+5i %+5i\n%+5i %+5i %+5i'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">-6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">-65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>还可以在i和%之间加空格。这样，如果替代占位符的数字没有正负号要显示，就会往前边加个空格。第二行不加空格做对比。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'% i% i% i\n%i%i%i'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">-6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">-65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>对于规定了位数的情况（仅限右对齐），如果希望用0占位，则在表示位数的数字之前写0。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-built_in">string</span>.<span class="hljs-built_in">format</span>(<span class="hljs-string">'%05i %05i %05i\n%+5i %+5i %+5i'</span>,<span class="hljs-number">2345</span>,<span class="hljs-number">-6</span>,<span class="hljs-number">42</span>,<span class="hljs-number">-65</span>,<span class="hljs-number">224</span>,<span class="hljs-number">1</span>)
+</code></pre>
+</blockquote>
+</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X22更多格式</li>
+</ul>
+
+</body></html>

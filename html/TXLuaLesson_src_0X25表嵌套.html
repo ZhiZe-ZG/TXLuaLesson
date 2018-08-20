@@ -1,0 +1,83 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X25表嵌套</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X24词典</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>表也可以作为表的成员.如果表的成员本身也是表,就可能出现连续使用多个方括号多次索引.例如:
+<blockquote>
+<pre><code class="language-lua">L1={<span class="hljs-string">'hello'</span>,<span class="hljs-string">'world'</span>,<span class="hljs-string">'good'</span>}
+L2={<span class="hljs-number">23</span>,<span class="hljs-number">34</span>,L1}
+<span class="hljs-built_in">print</span>(L2[<span class="hljs-number">3</span>][<span class="hljs-number">2</span>])
+</code></pre>
+</blockquote>
+在输出时,L2先和[3]结合.返回值是L1的值.它仍是一个表,继续和[2]结合.返回的值就是'world'.</li>
+<li>一个表也可以是自己的成员,由于定义这个表的时候它本身的变量名还没有被赋值.所以把自己变成自己的成员这个过程需要一个中间步骤.
+<blockquote>
+<pre><code class="language-lua">L={<span class="hljs-number">12</span>,<span class="hljs-number">34</span>}
+L[<span class="hljs-number">3</span>]=L
+<span class="hljs-built_in">print</span>(L[<span class="hljs-number">3</span>][<span class="hljs-number">3</span>][<span class="hljs-number">1</span>])
+L[<span class="hljs-number">3</span>][<span class="hljs-number">3</span>][<span class="hljs-number">3</span>]==L
+</code></pre>
+</blockquote>
+</li>
+<li>如果不涉及自我包含.表的嵌套可以一次性定义出来.
+<blockquote>
+<pre><code class="language-lua">L={<span class="hljs-number">12</span>,<span class="hljs-number">34</span>,{<span class="hljs-number">222</span>,<span class="hljs-number">333</span>,<span class="hljs-number">3334</span>},<span class="hljs-number">83</span>}
+<span class="hljs-built_in">print</span>(L[<span class="hljs-number">3</span>][<span class="hljs-number">1</span>])
+</code></pre>
+</blockquote>
+</li>
+<li>特别注意.在表作为表的成员时.并没有把作为成员的表复制一份.而是只保存了一个引用.(这很好理解,如果一个表作为另一个表的成员就复制一份的话.一个包含自己的表会瞬间耗尽任意大的内存.)</li>
+<li>关于6中提到的问题.更正式的说法是Lua中的表是引用类型.这涉及内存分配的问题.我不想在此展开讨论.如果你已经了解过引用类型和值类型的区别.那么在Lua中,把所有类型都当做引用类型处理就行了.因为把值类型当作对常量的引用就好了.</li>
+<li>引用类型的一个很直观的体现就是,在修改作为成员的表的内容的时候.如果通过把这个表当作成员的表访问,查看到的也是修改后的结果.例如:
+<blockquote>
+<pre><code class="language-lua">L1={<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>}
+L2={<span class="hljs-number">8</span>,L1,<span class="hljs-number">9</span>}
+<span class="hljs-built_in">print</span>(L2[<span class="hljs-number">2</span>][<span class="hljs-number">1</span>])
+L1[<span class="hljs-number">1</span>]=<span class="hljs-string">'I  am changed'</span>
+<span class="hljs-built_in">print</span>(L2[<span class="hljs-number">2</span>][<span class="hljs-number">1</span>])
+</code></pre>
+</blockquote>
+</li>
+<li>那么如果我希望得到一个链表的复制品(修改一个时候不会影响另一个).就需要创建一个新的表,然后把前者的数据都复制过来.例如:
+<blockquote>
+<pre><code class="language-lua">LL1={<span class="hljs-number">4</span>,<span class="hljs-number">5</span>,<span class="hljs-number">6</span>}
+LL2={}
+LL2[<span class="hljs-number">1</span>],LL2[<span class="hljs-number">2</span>],LL2[<span class="hljs-number">3</span>]=LL1[<span class="hljs-number">1</span>],LL1[<span class="hljs-number">2</span>],LL1[<span class="hljs-number">3</span>]
+<span class="hljs-built_in">print</span>(LL2[<span class="hljs-number">1</span>],LL2[<span class="hljs-number">2</span>],LL2[<span class="hljs-number">3</span>])
+LL1[<span class="hljs-number">2</span>]=<span class="hljs-string">'Changed'</span>
+<span class="hljs-built_in">print</span>(LL1[<span class="hljs-number">2</span>])
+<span class="hljs-built_in">print</span>(LL2[<span class="hljs-number">2</span>])
+</code></pre>
+</blockquote>
+</li>
+<li>在9中举例的方法.如果结合了结构控制中的循环语句 .就能实现对任意成员个数的表实现复制.但是这还是没有办法解决嵌套表的复制问题.例如:
+<blockquote>
+<pre><code class="language-lua">L={<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>}
+L1={<span class="hljs-number">8</span>,L}
+L2={}
+L2[<span class="hljs-number">1</span>],L2[<span class="hljs-number">2</span>]=L1[<span class="hljs-number">1</span>],L1[<span class="hljs-number">2</span>]
+L1[<span class="hljs-number">2</span>][<span class="hljs-number">3</span>]=<span class="hljs-string">'Changed'</span>
+<span class="hljs-built_in">print</span>(L1[<span class="hljs-number">2</span>][<span class="hljs-number">3</span>])
+<span class="hljs-built_in">print</span>(L2[<span class="hljs-number">2</span>][<span class="hljs-number">3</span>])
+</code></pre>
+</blockquote>
+可以看到L1和L2中的第二个元素的第三个元素同时被改变了.或者更准确地说是,这两个元素其实是同一个元素.</li>
+<li>解决嵌套表的复制问题.可以结合值类型判断使用递归算法.在复制一个表时如果它的成员仍旧是表,则对这个成员也递归使用复制函数.不过这些算法层面的问题和具体的语言关系不大,我将在别的教程中详细讨论.</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X2C表的遍历</li>
+</ul>
+
+</body></html>

@@ -1,0 +1,65 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X1E闭包</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X1D变量作用域</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>在数学表达中，如果使用了函数参数列表中没有出现的变量。那么这个变量就称为自由变量。因为它的取值在表达式中是不确定的，需要看上下文才能确定其取值（或者取值范围）。例如f(x)=x+y中y就是自由变量。</li>
+<li>含有自由变量的表达式称为开放的。因为它除了函数参数和返回值意外，还能通过其他途径和外部交换信息。而把自由变量限定的过程称为闭包。</li>
+<li>在编程中自由变量是指所有的非本地变量。这个定义表面上和数学定义略有出入。但是请注意以下几点：
+<ul>
+<li>参数列表中所有的变量，都是本地的局部变量。</li>
+<li>不在参数列表中的本地局部变量。都由常量或者形式参数赋予初始值。后续存储值的来源也是其他变量运算的结果。所以它不可能和函数外部直接交互。</li>
+<li>基于以上两条原因，编程中的自由变量被变相地描述为函数中的非本地变量。</li>
+</ul>
+</li>
+<li>排除掉本地变量，实际上Lua函数中的自由变量只有在函数外部创建的变量（全局变量或者函数外部的局部变量）。</li>
+<li>Lua中限制自由变量的方式主要是：
+<ul>
+<li>把一个函数的定义放到另一个函数定义内部。</li>
+<li>内部函数中的自由变量，全是外部函数中的局部变量。</li>
+<li>这样虽然内部函数使用了自由变量。但是整体上（加上外部函数）看来没有自由变量。</li>
+</ul>
+</li>
+<li>一个闭包的示例。
+<blockquote>
+<pre><code class="language-lua"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addCreater</span><span class="hljs-params">(x)</span></span>
+   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span><span class="hljs-params">(y)</span></span>
+       <span class="hljs-keyword">return</span> x+y
+   <span class="hljs-keyword">end</span>
+   <span class="hljs-keyword">return</span> add
+<span class="hljs-keyword">end</span>
+</code></pre>
+</blockquote>
+外层函数addCreater函数接受一个参数x（这里默认是number），返回一个函数add。函数add接受一个参数y（这里也认为是number），返回x和y的和。试运行：
+<blockquote>
+<pre><code class="language-lua">f=addCreater(<span class="hljs-number">5</span>)
+f(<span class="hljs-number">2</span>)
+g=addCreatre(<span class="hljs-number">3</span>)
+g(<span class="hljs-number">2</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>在6中演示的代码中。add函数使用了非本地的（不是在add内部定义的）变量x。但是x又是addCreater的局部变量。因此就称add中的自由变量x闭包在了addCreater中。</li>
+<li>6中演示代码的意义在于把一个二元函数改写成了一元函数的复合。内层函数接受第一个加数，返回一个函数。再调用这个返回的函数传递加数2。</li>
+<li>演示： 闭包 <a href="https://www.bilibili.com/video/av15860130/">https://www.bilibili.com/video/av15860130/</a></li>
+<li>很多人说闭包是一种编程工具。用于封装变量。防止这些变量被其他函数误操作。比如这里的闭包变量x，不可能被返回值（add函数）以外的函数访问。</li>
+<li>但是，在函数式编程中。闭包应该被认为是一种自然而然的性质。（比如lambda演算中的闭包：((lambda x.(lambda y.(x+y)) 3) 2)。）之所以需要单独作为一个特性而介绍是因为，目前的计算机主要基于图灵机的模式，有变量系统。在有变量系统和命名空间、访问限制等的情况下，并不一定需要实现闭包。</li>
+<li>如果你倾向于编写面向对象（Object Oriented,OO）的程序，而不是函数式编程，闭包不是必须掌握的内容。但是也可以了解一些和函数式编程相关的写法，作为编程工具使用。下一节将介绍一种闭包的使用情景。</li>
+<li>如果你对闭包仍然感觉没有彻底理解，并且希望掌握它。可以参考我之前制作的编程范式视频中函数式编程相关的部分。</li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X23计数工具</li>
+</ul>
+
+</body></html>

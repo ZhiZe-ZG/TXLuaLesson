@@ -1,0 +1,73 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head><body class="markdown-body">
+<h1>0X24词典</h1>
+<h2>前置知识</h2>
+<ul>
+<li>0X18简单的表</li>
+</ul>
+<h2>正文</h2>
+<ol>
+<li>Lua中表的索引除了是数字也可以是其他值。比较常用的就是用字符串作为索引。例如:
+<blockquote>
+<pre><code class="language-lua">L={}
+L[<span class="hljs-string">'MyName'</span>]=<span class="hljs-string">'Tom'</span>
+L[<span class="hljs-string">'YourName'</span>]=<span class="hljs-string">'Jerry'</span>
+<span class="hljs-built_in">print</span>(L[<span class="hljs-string">'MyName'</span>],L[<span class="hljs-string">'YourName'</span>])
+L[<span class="hljs-literal">true</span>]=<span class="hljs-string">'This is true.'</span>
+L[<span class="hljs-built_in">print</span>]=<span class="hljs-string">'This is print function'</span>
+</code></pre>
+</blockquote>
+(除了整数和字符串以外,浮点数,函数,表,布尔值等都可以做索引.但是为了防止程序难以理解.我们一般就用数字和字符串作为索引.)</li>
+<li>也可以在初始化的时候就指定索引和值的关系.用等号链接索引和值.作为索引的变量(或者字面值)要加方括号,放在对应的值和等号前:
+<blockquote>
+<pre><code class="language-lua">L={[<span class="hljs-number">2</span>]=<span class="hljs-number">45</span>,[<span class="hljs-number">5</span>]=<span class="hljs-string">"he"</span>,[<span class="hljs-string">"a"</span>]=<span class="hljs-literal">true</span>}
+</code></pre>
+</blockquote>
+这等价于
+<blockquote>
+<pre><code class="language-lua">L={}
+L[<span class="hljs-number">2</span>]=<span class="hljs-number">45</span>
+L[<span class="hljs-number">5</span>]=<span class="hljs-string">"he"</span>
+L[<span class="hljs-string">"a"</span>]=<span class="hljs-literal">true</span>
+</code></pre>
+</blockquote>
+官网上还介绍了自动分配数字索引和显式指定索引混用的用法.但是个人认为这回带来不必要的复杂性.因此在此不予介绍.</li>
+<li>如果用作索引的字符串符合Lua中变量命名规范，也可做一些简写。表名后加英文句点然后加不带引号的字符串表示返回表中这个字符串对应的成员。例如L['hello']等价于L.hello这中写法.又如:
+<blockquote>
+<pre><code class="language-lua">L={}
+L.MyName=<span class="hljs-string">'Tom'</span>
+<span class="hljs-built_in">print</span>(L.MyName)
+</code></pre>
+</blockquote>
+</li>
+<li>在初始化时赋值,如果一个符合规范的字符串用作索引,也可以省略其方括号和引号.例如以下两个语句是等价的:
+<blockquote>
+<pre><code class="language-lua">L={first=<span class="hljs-string">"Tai"</span>,last=<span class="hljs-string">"Xuan"</span>}
+L={[<span class="hljs-string">"first"</span>]=<span class="hljs-string">"Tai"</span>,[<span class="hljs-string">"last"</span>]=<span class="hljs-string">"Xuan"</span>}
+</code></pre>
+</blockquote>
+</li>
+<li>在3中提到的语法糖还有一种形式.如果索引的值正好是一个函数.那么在函数调用式中用冒号&quot;:&quot;取代句点&quot;.&quot;,就会把表本身作为第一个参数传递给函数.例如:
+<blockquote>
+<pre><code class="language-lua">L={}
+L.p=<span class="hljs-built_in">print</span>
+L:p()
+L.p(<span class="hljs-string">"abc"</span>)
+L:p(<span class="hljs-string">"abc"</span>)
+</code></pre>
+</blockquote>
+</li>
+<li>演示: 词典和语法糖  <a href="https://www.bilibili.com/video/av16289005/">https://www.bilibili.com/video/av16289005/</a></li>
+</ol>
+<h2>后续推荐</h2>
+<ul>
+<li>0X25表嵌套</li>
+</ul>
+
+</body></html>
