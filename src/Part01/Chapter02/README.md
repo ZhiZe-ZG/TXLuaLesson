@@ -74,7 +74,7 @@ end
 
 ```lua
 print('hello script')
-print('goodbye script') 
+print('goodbye script')
 ```
 
 在Shell中通过以下命令执行：
@@ -82,10 +82,3 @@ print('goodbye script')
 ```shell
 lua test.lua
 ```
-
-
-
-
-
-
-
