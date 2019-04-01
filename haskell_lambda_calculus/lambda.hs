@@ -113,11 +113,24 @@ alphaForBeta e@(EEExp e1 e2) = alphaAll (prebeta e) e
 
 -- 自动beta规约到最简
 autoBeta :: Expressions -> Expressions
-autoBeta e@(EEExp e1@(VEExp v ee) e2) = autoBeta (beta (alphaForBeta e))
-autoBeta e@(EEExp e1@(VExp v) e2) = EEExp e1 (autoBeta e2) -- 如果暂时不能直接简化就把每个部分先尝试简化
-autoBeta e@(EEExp e1@(EEExp ee1 ee2) e2) = autoBeta (EEExp (autoBeta e1) (autoBeta e2)) -- 如果暂时不能直接简化，就尝试把每个部分简化，然后看结果能不能再简化
-autoBeta e@(VEExp v e1) = e
-autoBeta e@(VExp v) = e
+autoBeta e | (eta_ e (autoBeta2 e)) = e
+           | otherwise = autoBeta (autoBeta2 e)
+
+-- 原始版本存在问题
+-- autoBeta :: Expressions -> Expressions
+-- autoBeta e@(EEExp e1@(VEExp v ee) e2) = autoBeta (beta (alphaForBeta e))
+-- autoBeta e@(EEExp e1@(VExp v) e2) = EEExp e1 (autoBeta e2) -- 如果暂时不能直接简化就把每个部分先尝试简化
+-- autoBeta e@(EEExp e1@(EEExp ee1 ee2) e2) = autoBeta (EEExp (autoBeta e1) (autoBeta e2)) -- 如果暂时不能直接简化，就尝试把每个部分简化，然后看结果能不能再简化
+-- autoBeta e@(VEExp v e1) = e
+-- autoBeta e@(VExp v) = e
+
+autoBeta2 :: Expressions -> Expressions
+autoBeta2 e@(VExp v) = e
+autoBeta2 e@(VEExp v e1) = VEExp v (autoBeta2 e1)
+autoBeta2 e@(EEExp e1@(VExp v) e2) = EEExp e1 (autoBeta2 e2) -- 如果暂时不能直接简化就把每个部分先尝试简化
+autoBeta2 e@(EEExp e1@(EEExp ee1 ee2) e2) = EEExp (autoBeta2 e1) e2 -- 如果暂时不能直接简化，就尝试把每个部分简化，然后看结果能不能再简化
+autoBeta2 e@(EEExp e1@(VEExp v ee) e2) = beta (alphaForBeta e)
+
 
 
 -- Eta规则
@@ -127,11 +140,11 @@ autoBeta e@(VExp v) = e
 -- 这里并不是完全按照eta规则的原始规定，遍历所有可能的选项替换到函数中。而是逐层比较结构，因此写作eta_
 eta_ :: Expressions -> Expressions -> Bool
 eta_ e1@(VExp v1) e2@(VExp v2) | v1==v2 = True
-                              | otherwise = False
+                               | otherwise = False
 eta_ e1@(EEExp e11 e12) e2@(EEExp e21 e22) = (eta_ e11 e21) && (eta_ e12 e22)
 eta_ e1@(VEExp v1 ee1) e2@(VEExp v2 ee2) | v1==v2 = eta_ ee1 ee2
                                          | otherwise = eta_ (totalalpha v1 (getNotInExpVar (EEExp e1 e2)) e1) (totalalpha v2 (getNotInExpVar (EEExp e1 e2)) e2)
-  
+eta_ e1 e2 = False -- 其他情况为假
 
 
 -- 应该是得到一个整个式子都没有用过的变量
@@ -178,7 +191,14 @@ lOr = VEExp vx (VEExp vy (EEExp (EEExp (VExp vx) (VExp vx)) (VExp vy)))
 lAnd = VEExp vx (VEExp vy (EEExp (EEExp (VExp vx) (VExp vy)) (VExp vx)))
  
 
+-- number 
 
+vs = Var 4
+
+l0 = VEExp vs (VEExp vz (VExp vz))
+l1 = VEExp vs (VEExp vz (EEExp (VExp vs) (VExp vz)))
+
+ladd = VEExp vx (VEExp vy (VEExp vs (VEExp vz ( EEExp (EEExp (VExp vx) (VExp vs))  (EEExp (EEExp (VExp vy) (VExp vs)) (VExp vz))              ))))
 
 
 -- 应该写一个字符串和表达式互相转化的东西
