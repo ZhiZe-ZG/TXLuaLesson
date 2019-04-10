@@ -52,7 +52,7 @@ $$
 
 最经典的文字游戏玩法，当然是亲自用纸笔抄抄写写，勾勾画画。但是我不想把大把时间消耗在抄写字符上。我想把这些枯燥、机械的动作交给别人来处理，而我只关注游戏中比较有意思的部分。幸好，我这个需求，在将近一百年前就有解决方案了——做一台机器，让机器按照我的指引完成抄写。
 
-![图灵机模型](README.assets/1280px-Model_of_a_Turing_machine.jpg)
+![图灵机模型](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Model_of_a_Turing_machine.jpg/1280px-Model_of_a_Turing_machine.jpg)
 
 出于节约纸张的目的，我并不想直接用这种还需要用纸的机器。因此我使用另一种不需要消耗纸带，但是同样能按照我的指示自动完成抄写的神奇机器——Haskell——来进行游戏。
 
