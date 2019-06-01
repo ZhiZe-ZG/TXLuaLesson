@@ -34,9 +34,15 @@ dotnet new console -lang C#
 
 > dotnet仅仅初始化了与dotnet相关的文件。如果你使用VS Code编辑源码，那么在项目文件夹内启动VS Code时会提示你生成VS Code相关的配置（保存在项目文件夹下的`.vscode`文件夹中）。为了进行代码版本管理，你还可以再在这个文件夹中初始化git。
 
-如果要构建项目，使用`dotnet build`命令。当然也可以使用`dotnet run`编译并运行。这两个命令都有一些参数，用于控制编译版本（Debug或Release），编译基于的框架版本等。详见dotnet命令行工具的文档。
+如果要构建项目，使用`dotnet build`命令。当然也可以使用`dotnet run`编译并运行。编译的目标文件存在于项目文件夹中的`bin`文件夹下。这两个命令都有一些参数，用于控制编译版本（Debug或Release），编译基于的框架版本等。详见dotnet命令行工具的文档。
 
 在上传源码时，编译测试之后的可执行文件以及中间文件是没有必要上传的。此时可以使用`dotnet clean`清除项目构建的结果和中间文件。
 
+当开发工作告一段落，需要发布软件的时候，使用`dotnet publish`命令生成发布文件。生成的发布文件在项目文件夹下的`bin/Debug/publish`或`bin/Release/publish`文件夹中（没错发布版也分Debug和Release）。
 
+dotnet生成的发布文件的入口是一个后缀为`dll`的文件。这种文件不能直接在操作系统中执行，而需要在dotnet运行环境中执行。例如要执行一个`TXProject.dll`文件，使用命令：
+
+```shell
+dotnet TXProject.dll
+```
 
