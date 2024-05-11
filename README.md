@@ -10,7 +10,7 @@ This is a series of articles and related videos that I have completed on and off
 
 这是我在较长一段时间内断断续续完成的一系列文章以及相关视频。其主要内容是 Lua 的基础教程。现在这一项目已经完成。我目前没有继续拓展这一教程的计划。
 
-This document uses Mermaid syntax to describe the relationships between classes. Therefore please view this document using a Markdown editor that supports Mermaid rendering.
+This document uses Mermaid syntax to describe the relationships between lessons. Therefore please view this document using a Markdown editor that supports Mermaid rendering.
 
 该文档使用 Mermaid 语法描述了课程之间的关系。因此请使用支持 Mermaid 渲染的 Markdown 编辑器查看本文档。
 
