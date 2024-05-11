@@ -1,4 +1,4 @@
-# 0x04环境搭建（Arch Linux）
+# 0x04 环境搭建（Arch Linux）
 
 ## 前置知识
 
