@@ -6,9 +6,11 @@ TaiXuan's Programming Language Lua Lesson
 
 ## Introduction
 
+>[!]
+
 ## Table of Content
 
-### 图例
+图例：
 
 ```mermaid
 graph TD
@@ -26,6 +28,8 @@ graph TD
 ```
 
 节点间的连线表示学习顺序关系。当一个课程节点有多个指向它的箭头时，需要把每一个箭头出发点都学完再学习它。当一个课程节点发出多个箭头时，选择一个自己感兴趣的优先学习即可。
+
+此外，在 `Videos` 文件夹中有部分课程中提到的例子的视频演示。这些视频使用 Git LFS 上传，因此克隆仓库时请注意使用 Git LFS。
 
 ### Stage0 前言
 
