@@ -46,16 +46,18 @@ graph TD
 ```mermaid
 graph TD
     C00[0X00 编程前的硬件准备]
-    C4A[0X4A 安装和运行 Lua]
-    C4B[0X4B 常用 Lua 概念]
+    C4F[0X4F 安装和运行 Lua]
+    C50[0X50 常用 Lua 概念]
     S1[Stage1 入门]
 
-    C00-->C4A
-    C4A-->C4B
-    C4B-->S1
+    C00-->C4F
+    C4F-->C50
+    C50-->S1
 ```
 
 * [0X00 编程前的硬件准备](./Stage0/0X00编程前的硬件准备.md)
+* [0X4F 安装和运行 Lua](./Stage0/0X4F安装和运行Lua.md)
+* [0X50 常用 Lua 概念](./Stage0/0X50常用Lua概念.md)
 
 ### Stage1 入门
 
