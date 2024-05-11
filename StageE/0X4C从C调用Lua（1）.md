@@ -1,5 +1,11 @@
 # 0X4C 从C调用Lua（1）
 
+## 前置知识
+
+* 0X4B 与C交互
+
+## 简介
+
 这一期我们来演示一个从C调用Lua的实例。我们写一个C程序，在其中启动Lua虚拟机，并且让虚拟机执行一条Lua语句。
 
 我将把源码拆开讲解。
@@ -90,3 +96,7 @@ gcc calllua1.c -o test1 -I /usr/local/include -L /usr/local/lib -llua -lm -ldl
 
 <http://lua-users.org/wiki/SimpleLuaApiExample>
 <http://www.jb51.net/article/65224.htm>
+
+## 后续推荐
+
+* 0X4D 从C调用Lua（2）
