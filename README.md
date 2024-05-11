@@ -6,7 +6,17 @@ TaiXuan's Programming Language Lua Lesson
 
 ## Introduction
 
->[!]
+This is a series of articles and related videos that I have completed on and off over a long period of time. Its main content is a basic tutorial on Lua. This project is now complete. I have no plans to expand this tutorial for now.
+
+这是我在较长一段时间内断断续续完成的一系列文章以及相关视频。其主要内容是 Lua 的基础教程。现在这一项目已经完成。我目前没有继续拓展这一教程的计划。
+
+This document uses Mermaid syntax to describe the relationships between classes. Therefore please view this document using a Markdown editor that supports Mermaid rendering.
+
+该文档使用 Mermaid 语法描述了课程之间的关系。因此请使用支持 Mermaid 渲染的 Markdown 编辑器查看本文档。
+
+The project's video files are in the `Videos` folder. I used Git LFS to manage these video files. When cloning the repository, be sure to use the Git LFS command to download the video (please refer to <https://git-lfs.com/>).
+
+该项目的视频文件早 `Videos` 文件夹中。我使用了 Git LFS 来管理这些视频文件。在克隆该仓库的时候注意使用 Git LFS 命令下载视频（请参考<https://git-lfs.com/>）。
 
 ## Table of Content
 
