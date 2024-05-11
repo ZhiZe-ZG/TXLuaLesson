@@ -27,6 +27,10 @@ TaiXuan's Programming Language Lua Lesson
 
 * 计划增加有关于C和Linux的有关内容。修改文件目录结构，增加C相关的计划。
 
+### 2018.08.08
+
+* 完成了写作和视频。
+
 ### 2018.4.2
 
 * 完成了最后的Lua C API章节。本教程至此告一段落。
